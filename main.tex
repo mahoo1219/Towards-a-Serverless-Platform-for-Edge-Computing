@@ -69,8 +69,10 @@ Milano, Italy}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
-The emergency of real-time and data-intensive applications, for which high latency and low throughput are prohibitive, challenges the success of the centralized data centre model. The new paradigm of edge computing aims to solve these problems; in contrast with cloud data centres, edge data centres are geographically distributed in proximity with end-users, which brings advantages, but also limitations in terms of resources. 
-Addressing the needs of different applications scenarios and the intrinsic characteristics of edge computing, in this paper we propose a serverless platform for edge computing. Firstly, we motivated the adoption of a serverless computing model. Secondly, we discussed the need for different platform services composing the building blocks of a serverless edge platform. Finally, we evaluated a platform prototype composed of state-of-art tools satisfying the identified needs. Results demonstrated the resource utilization footprint of these tools and the feasibility of the proposed platform in tackling different edge computing application scenarios and infrastructures.
+The emergency of real-time and data-intensive applications, for which high latency and low throughput are prohibitive, challenges the success of the centralized data centre model. The new paradigm of edge computing aims to solve these problems; in contrast with cloud data centres, fine-grained edge nodes are geographically distributed in proximity of end-users --- which brings advantages, but also limitations in terms of resources. 
+Addressing the needs of different applications scenarios and the intrinsic characteristics of edge computing, in this paper we propose a serverless platform for edge computing. Firstly, we motivated the adoption of a serverless computing model for the efficient provisioning of computing service. Secondly, additional services composing the building blocks of a serverless edge platform are discussed along with application scenarios. Finally, a platform prototype is evaluated and discussed in terms of resource utilization footprint and the satisfaction of different application requirements. 
+%we evaluated a platform prototype composed of state-of-art tools satisfying the identified needs. 
+Results demonstrated the resource utilization footprint of these tools and the feasibility of the proposed platform in tackling different edge computing application scenarios and infrastructures.
 
 %The proposed architecture tackles two kind of scenarios: the offloading of compute-intensive tasks from mobile devices; and the in-transit analysis of data at the network edge. 
 
@@ -104,12 +106,16 @@ In this paper, we address the main application scenarios of edge computing with 
 %In the last years, 
 Serverless computing has been proposed as an alternative execution model for cloud computing~\cite{}. In a serverless architecture, infrastructure management is fully delegated to third party providers, who takes care of dynamically provisioning and allocating resources --- thus the name \textit{serverless}. The function-as-a-service model (FaaS) realizes a serverless architecture by allowing application logic, written as stateless functions, to be executed on demand by containerized environments without pre-allocating resources. 
 
-The contributions of this paper are threefold. First, we motivate the adoption of a serverless architecture for the materialization of edge platforms. Second, the main application scenarios of edge computing are discussed with details about its specific requirements and matched with the platform services proposed for their realization. Finally, a platform prototype is evaluated and discussed in terms of resource utilization footprint and the satisfaction of different application requirements. Results have shown the feasibility of the proposed architecture and the benefits of a serverless edge platform.
+The contributions of this paper are threefold. Firstly, we motivate the adoption of a serverless architecture for the materialization of edge platforms. Secondly, the main application scenarios of edge computing are discussed with details about its specific requirements and matched with the platform services proposed for their realization. Finally, we extended OpenWhisk --- a state-of-art FaaS platform --- with optimizations and additional tools composing a platform prototype. 
+%evaluated and discussed in terms of resource utilization footprint and the satisfaction of different application requirements. 
+Results have shown the feasibility and the benefits of a serverless edge platform.
 
 
 %we discuss the need for different platform services composing the building blocks of a serverless edge platform; finally, we evaluate a platform prototype composed of state-of-art tools satisfying the identified needs.
 
-The paper is organized as follows. Section~\ref{sec:background} presents the main characteristics of a serverless architecture and the function-as-a-service model justifying their adoption. Throughout Section~\ref{sec:SEP}, the building blocks of a serverless edge platform are presented and motivated by means of examples from different application scenarios. Section~\ref{sec:prototype} presents the adopted tools and technology providing the platform services, whereas Section~\ref{sec:evaluation} discusses the results from the prototype evaluation. Finally, Section~\ref{sec:conclusions} concludes this work with final discussions and future works.
+The paper is organized as follows. Section~\ref{sec:background} presents the main characteristics of serverless computing.
+%and the function-as-a-service model justifying their adoption. 
+Throughout Section~\ref{sec:SEP}, the building blocks of a serverless edge platform are presented and motivated by means of different application scenarios. Section~\ref{sec:prototype} presents the tools and architecture composing the platform prototype, whilst Section~\ref{sec:evaluation} discusses evaluation results. Finally, Section~\ref{sec:conclusions} concludes this work with final discussions and future works.
 
 %. A serverless platform for edge computing must address these needs with the optimization of the existing FaaS model and technology along with the additional services and mechanisms targeting different application scenarios and edge computing infrastructures.
 
@@ -125,25 +131,24 @@ The paper is organized as follows. Section~\ref{sec:background} presents the mai
 
 %To address the characteristics of edge computing nodes, an edge platform must manage its resources very efficiently, which means provisioning and allocating resources only when they are needed. 
 
-
-Serverless computing~\cite{} is mainly associated with two concepts: of applications that rely on third-party cloud services for handling business logic and state (also known as background-as-a-service, or BaaS); and that of applications for which server-side logic is still written by application developers, but, unlike traditional architectures, runs in stateless compute containers that are event-triggered
-%, ephemeral (may only last for one invocation), 
-and fully managed by a third party (also known as functions-as-a-service, or FaaS).
-
 %data size as a criteria for the offloading decision
 \begin{figure*}[tbp]
 	\centering
 	\captionsetup[subfigure]{width=0.48\linewidth}
-	\subfloat[Both \textit{feature extraction} and \textit{matching} compose a single service (fEM); mobile devices (md) are unable to offload computation to SEP A, whose resources have been allocated to other functions.\label{fig:Mobile_Computation_Offloading_F1}] {\includegraphics[width=0.48\textwidth]{Figs/Mobile_Computation_Offloading_F1.pdf}}
+	\subfloat[Both \textit{feature extraction} and \textit{matching} compose a single service (fEM); mobile devices (md) are unable to offload computation to SEP A, whose resources have been allocated to other functions; computation is offloading to SEP B with one \textit{HTTP request} per video frame.\label{fig:Mobile_Computation_Offloading_F1}] {\includegraphics[width=0.48\textwidth]{Figs/Mobile_Computation_Offloading_F1.pdf}}
 	~
 	\captionsetup[subfigure]{width=0.52\linewidth}
-	\subfloat[Data-intensive \textit{feature extraction} (fE) is performed by SEP A and B, whereas \textit{feature matching} (fM) is opportunistically offloaded from SEP A to SEP B by a load balancer.\label{fig:Mobile_Computation_Offloading_F2}] {\includegraphics[width=0.52\textwidth]{Figs/Mobile_Computation_Offloading_F2.pdf}}
+	\subfloat[Data-intensive \textit{feature extraction} (fE) is performed by SEP A and B; whereas \textit{feature matching} (fM) is opportunistically offloaded from SEP A to SEP B by a \textit{Load Balancer}. In total, computation is offloaded to either SEP with two \textit{HTTP requests} per video frame.\label{fig:Mobile_Computation_Offloading_F2}] {\includegraphics[width=0.52\textwidth]{Figs/Mobile_Computation_Offloading_F2.pdf}}
 	\caption{\textit{Feature extraction} and \textit{matching} functions from the AR example forming a single (a) or two fine-grained (b) services} \label{fig:Mobile_Computation_Offloading}
 \end{figure*}
 
-In the FaaS model, application logic is implemented as functions, which may be written in various languages and exposed as web services~\cite{}. Functions are packed with dependencies (e.g., modules, libraries, other resources). Function runtime instances (e.g., NodeJS, Python) are made available on demand within milliseconds, thanks to the container technology. They can be executed just once, frequently, or concurrently. After completion, containers may remain idle (warm) for a short period of time before been reused or released. 
+Serverless computing~\cite{baldini2017serverless,Roberts:2018} is mainly associated with two concepts: of applications that rely on third-party cloud services for handling business logic and state (also known as background-as-a-service, or BaaS); and that of applications for which server-side logic is still written by application developers, but, unlike traditional architectures, runs in stateless compute containers that are event-triggered
+%, ephemeral (may only last for one invocation), 
+and fully managed by a third party (also known as functions-as-a-service, or FaaS).
 
-If compared to conventional Infrastructure-a-as-Service (IaaS), the FaaS model ensures resources to be allocated when actually needed. FaaS platforms~\cite{} also enforce limitations to the function package size and execution time by design. Due to its characteristics, this execution model enables an efficient usage of shared computational resources, which is particularly important to cope with the resource limitations of edge platforms and to allow edge-based solutions to scale~\cite{}.
+In the FaaS model, application logic is implemented as functions, which may be written in various languages and exposed as web services~\cite{}. Functions are packed with dependencies (e.g., modules, libraries, other resources); runtime instances (e.g., NodeJS, Python) are made available on demand within milliseconds, thanks to the container technology. Functions can be executed just once, frequently, or concurrently. After completion, containerized runtime instances may remain idle (warm) for a short period of time before been reused or released. 
+
+If compared to the conventional Infrastructure-a-as-Service model (IaaS), the FaaS model ensures resources to be allocated when actually needed. FaaS platforms (e.g., AWS Lambda~\cite{AWSLambda}) also enforce limitations to the function package size and execution time by design. Due to its characteristics, this execution model enables an efficient usage of shared computational resources, which is particularly important to cope with the resource limitations of edge platforms and to allow edge-based solutions to scale~\cite{GarrigaMendonca2017}.
 
 
 
@@ -165,24 +170,21 @@ If compared to conventional Infrastructure-a-as-Service (IaaS), the FaaS model e
 
 The offloading of computation from mobile devices to cloud servers was firstly addressed by the concept of Mobile Cloud Computing~\cite{Khan:14}. Its main purpose was to enable rich mobile applications to be executed in resource-constrained mobile devices. However, this approach is limited by network latency, which is prohibitive for most real-time and interactive applications.
 
-Addressing the network latency problem, \textit{cloudlets}~\cite{Satyanarayanan:2009} have been proposed as resource-rich computer or cluster of computers  accessible through wireless local area network (WLAN). Their purpose is to enable the offloading of latency-sensitive computation from mobile  and, more recently, other IoT devices. 
+Addressing the network latency problem, \textit{cloudlets}~\cite{Satyanarayanan:2009} --- a precursor of edge computing --- have been proposed as resource-rich computer or cluster of computers  accessible through wireless local area network (WLAN). Their purpose is to enable the offloading of latency-sensitive computation from mobile and, more recently, general IoT devices. 
 
 %To address this kind of edge computing scenario, an edge platform should support the execution of \textit{latency-sensitive} tasks. With the evolution of mobile devices capabilities, \textit{computing-intensive} tasks from real-time applications are of particular interest.
 
 To illustrate this scenario, let us consider an Augemented Reality (AR) application that relies on two tasks: one for \textit{feature extraction} and another for \textit{feature matching}. The first handles the extraction of features from captured video frames, whilst the second matches theses features against a catalog (e.g., points of interest in a city area). 
 %By offloading these tasks to a surrogate edge platform, the application is able to recognize more POIs while avoiding to stress the mobile device.
-These computation-intensive, latency-sensitive tasks are strong candidates for been offloaded.
+These computation-intensive, latency-sensitive tasks are strong candidates for been offloaded from hosting devices.
 
-Targeting these requirements, a serverless edge platform (SEP) can exploit the FaaS model to allow the \textit{feature extraction} and \textit{matching} to be written as stateless functions and consumed as services. The resulting architecture would consist of two independent, fine-grained and highly cohesive FaaS-based services\footnote{We do not use the microservice terminology despite the characteristics of that FaaS-based services share with microservices}. Alternatively, both functions could compose a single, coarser service. Its main advantage would be the reduced communication overhead. However, in the context of edge computing, separating functions into distinct services has the following benefits: i) it allows different functions to be consumed independently by distinct applications (e.g., a common feature extracting service); and ii) it allows functions to be deployed and scaled independently.%; and iii) it allows the dynamic placement of functions into different edge and cloud platforms.
+Targeting these requirements, a serverless edge platform (SEP) can exploit the FaaS model to allow tasks such as the \textit{feature extraction} and \textit{matching} to be written as stateless functions and consumed as web services. The resulting architecture would consist of two independent, fine-grained and highly cohesive FaaS-based services\footnote{We do not use the microservice terminology despite the characteristics of that FaaS-based services share with microservices}. Alternatively, both functions could compose a single, coarser service. Its main advantage would be the reduced communication overhead. However, in the context of edge computing, separating functions into distinct services has the following benefits: i) it allows different functions to be consumed independently by distinct applications (e.g., a common feature extracting service); and ii) it allows functions to be deployed and scaled independently.%; and iii) it allows the dynamic placement of functions into different edge and cloud platforms.
 
-
-The last advantage is particularly important, as different types of edge infrastructures~\cite{Satyanarayanan:2009,Taleb:2013,Liu:2014,K.Wang:2015} converge in one aspect: the limitation of resources. The separation of functions with different responsibilities and requirements into independent services allows each service to be provided by distinct edge platforms. 
-
-For instance, in a hierarchical cloud-edge topology, data-intensive functions are best candidates for been placed in close proximity to end-users, whilst computing-intensive functions may require more powerful resources from intermediary edge nodes or even cloud data centres. As such, the decision of where to place and execute each function will depend on factors such as the characteristics of the function, the capabilities of each platform, and the network latency and throughput among platforms and edge devices. 
+The last advantage is particularly important, as different types of edge infrastructures~\cite{Satyanarayanan:2009,Taleb:2013,Liu:2014,K.Wang:2015} converge in one aspect: their limitation of computational resources. The separation of functions with different responsibilities and requirements into independent services allows each function to be provided by distinct edge platforms; the decision of where to execute each function will depend on factors such as the characteristics and requirements of each function, the capabilities of distinct edge platforms, and the network latency and throughput among edge platforms and client devices. In a hierarchical topology~\cite{Liu:2014}, data-intensive functions are best candidates for been placed in close proximity to the edge, whereas computing-intensive functions may require more powerful resources from intermediary edge nodes. 
 
 Figure~\ref{fig:Mobile_Computation_Offloading_F1} depicts the two AR functions as a single service (one request per offloading), whilst Figure~\ref{fig:Mobile_Computation_Offloading_F2} depicts each function as an independent service (two requests per offloading). 
-In the former approach, mobile devices (md) connected to SEP A are unable to offload computation, as the fEM function is currently unavailable at that platform and the network throughput among SEPs is insufficient for delegating requests with a video frame as payload.
-In the latter approach, data-intensive \textit{feature extraction} (fE) is performed by both SEPs. Conversely, \textit{feature matching} (fM) is unavailable at SEP A; fM requests targeting this platform are offloaded to SEP B by its \textit{Load Balancer},
+In the first approach, mobile devices (md) connected to SEP A are unable to offload computation, as the fEM function is currently unavailable at that platform and the network throughput among these SEPs is insufficient for delegating requests with a video frame payload.
+In the second approach, data-intensive \textit{feature extraction} (fE) is performed by both SEPs. Conversely, \textit{feature matching} (fM) is unavailable at SEP A; fM requests targeting this platform are offloaded to SEP B by its \textit{Load Balancer},
 %or to the cloud by a load balancer, 
 thanks to the reduced payload size (frame features extracted by fE) and the low latency among these surrogate platforms. 
 
@@ -200,9 +202,9 @@ thanks to the reduced payload size (frame features extracted by fE) and the low 
 Notwithstanding the benefits of the FaaS model, the satisfaction of low-latency requirements by the serverless edge platform requires further optimization.
 
 %In the FaaS model
-First, functions are triggered by different sort of events, including HTTP requests. In the context of real-time applications, communication overhead must be kept minimal. As such, the edge platform must include an interface that allows clients to trigger sequential or parallel execution of functions without the overhead associated to the HTTP protocol. In this regard, the \textit{WebSocket protocol}
+First, functions are externally triggered by HTTP requests. In the context of real-time applications, communication overhead must be kept minimal. As such, the edge platform must include an interface that allows clients to trigger sequential or parallel execution of functions composing different services without the overhead associated to the HTTP protocol. In this regard, the \textit{WebSocket protocol}~\footnote{https://tools.ietf.org/html/rfc6455}
 %is a standardized protocol that 
-provides full-duplex communication channels over a single TCP connection~\cite{}. %Figure~\ref illustrates this feature.
+provides full-duplex communication channels over a single TCP connection. %Figure~\ref illustrates this feature.
 
 %For this, each task is deployed as a stateless, fully-managed function and exposed as a web service. 
 %Within milliseconds, the fully-managed platform allocates a containerized runtime instance in which the function is first executed, whereas subsequent executions may take advantage of existing instances.
@@ -210,11 +212,11 @@ provides full-duplex communication channels over a single TCP connection~\cite{}
 %Finally, a third function gets detailed information about each POI from a remote database.
 %In particular, OpenWhisk is an state-of-art and open source FaaS platform.
 
-The support for websockets would enable real-time interactions between mobile clients and the edge platform. Still, individual function invocations may add significant latency overhead whenever two or more functions form an execution flow. To avoid this overhead, developers would be forced to either chain function calls through hardcoded dependencies, or write less granular and cohesive functions. Moreover, the chaining of function also imposes a cost overhead, since calling functions (and allocated resources) are kept waiting.% for other function(s) to return. 
+The support for websockets would enable real-time interactions between mobile clients and the edge platform. Still, individual function invocations may add significant latency overhead whenever two or more functions form an execution flow. To avoid this overhead, developers would be forced to either chain function calls through hardcoded dependencies, or write coarser and less cohesive functions. Moreover, the chaining of function also imposes a cost overhead, since calling functions are kept waiting.% for other function(s) to return. 
 
 To address latency, design, cost, and resource efficiency concerns, the SEPs should support \textit{function workflows}. This kind of service would allow developers to define, through visual or textual programming, a function execution flow.
 %starting with the processing of the input sent by a client and finishing with the result sent back to the client. 
-Triggered by events (e.g., WebSocket requests), at each intermediary step, result is passed to the subsequent function(s). Going back to the AR example, Figure~\ref{fig:Mobile_Computation_Offloading_Workflow} depicts a simple workflow consisting of the sequential execution of the \textit{feature extraction} and the \textit{feature matching} functions, which remain agnostic of each other.
+Similarly to functions, workflows are triggered by events; at each intermediary step, result from one function is passed to the subsequent function call. Going back to the AR example, Figure~\ref{fig:Mobile_Computation_Offloading_Workflow} depicts a simple workflow consisting of the sequential execution of the \textit{feature extraction} and \textit{matching} functions, which remain decoupled.% of each other.
 
 \begin{figure}[tbp]
 	\centering
@@ -224,15 +226,16 @@ Triggered by events (e.g., WebSocket requests), at each intermediary step, resul
 \end{figure}
 
 Last but not least, existing FaaS platforms (e.g., AWS Lambda and Apache OpenWhisk) enforce a programming model in which functions have access to a transient folder without guaranteeing that subsequent invocations will be executed by the same containerized environment. %Thus, each invocation must check whether cached data is available. 
-In the context of real-time applications, retrieving extensive data sets may add prohibitive overhead. For instance, in the AR example, a POI catalog (circa 1Gb) is employed to identify points of interest against their matched features. Due to size limitations, it can not be packed with the function source code, but retrieved dynamically.
+In the context of real-time applications, retrieving extensive data sets may add prohibitive overhead. For instance, in the AR example, a POI catalog (circa 1Gb) is employed to identify points of interest against their matched features. Due to size limitations, it can not be packed with the function source code, but needs to be retrieved dynamically.
 %Cloud vendors provide storage services as part of their platform ecosystem. 
 
 %To address the need of edge services with dependency to large data sets
-Addressing the aforementioned issue, we propose to equip SEPs with a caching service. This service should fetch data from cloud-based storage services and keep this data available locally for mitigating networking overhead. 
+Addressing the aforementioned issue, we propose to equip SEPs with a caching service. This service should fetch data from cloud-based storage services and keep it available locally for mitigating networking overhead. 
 %More precisely, it consists of an object-based storage system, in which files are associated with metadata. 
 To make use of this service, SEP functions request files passing their cloud URI, which should return a valid file format.
 % --- and an optional expiration policy. 
-Once retrieved, the file os stored along with the metadata containing its URI and frequency of access. Subsequent requests to the same URI are served without networking overhead. Figure~\ref{fig:Mobile_Computation_Offloading_Caching} illustrates the interplay between the caching service storing a POI catalog (PC) retrieved from a cloud storage and multiple instances of the \textit{feature matching} function.
+Once retrieved, the caching service stores the file along with the metadata containing its URI and frequency of access; subsequent requests are served without networking overhead. 
+Figure~\ref{fig:Mobile_Computation_Offloading_Caching} illustrates the interplay between the caching service storing a POI catalog (PC) retrieved from a cloud storage and multiple runtime instances of the \textit{feature matching} function.
 
 %TODO: move this to the prototype section?
 %To support different kinds of edge infrastructure, the SEP caching service should rotate cached files according to the availability of storage resources and the access frequency of cached files. As such, files accessed less frequently are subject for been replaced in case of resource contention. 
@@ -245,7 +248,7 @@ Once retrieved, the file os stored along with the metadata containing its URI an
 \begin{figure}[tbp]
 	\centering
 	\includegraphics[width=\linewidth]{Figs/Edge_Data_Analytics_Video_Surveillance.pdf}
-	\caption{Features from video frames captures by surveillance cameras are extracted (fE) and, upon a positive matching (fM$e$), sent for further analysis by a cloud service (fM$c$).} 
+	\caption{Features from video frames captures by surveillance cameras are extracted (fE) and, upon a positive matching (fM$e$), sent for further analysis by a cloud service (fM$c$).}
 	\label{fig:Edge_Data_Analytics_Video_Surveillance}
 \end{figure}
 
@@ -257,14 +260,14 @@ More recently, the advent of data-intensive Internet of Things (IoT) devices and
 %and preventing network bottlenecks caused by centralization. Still, edge analysis may also need to cope with low-latency requirements, specially if analysis results should feed latency-sensitive actuation.
 
 %To illustrate this scenario
-For example, in the context of smart cities and cyber-physical-systems, let us consider a video surveillance application depicted by Figure~\ref{fig:Edge_Data_Analytics_Video_Surveillance}. Similarly to the AR application, compute-intensive functions such as \textit{feature extraction} (fE) and \textit{matching} (fM) are assigned to edge platforms.
+For example, in the context of smart cities and cyber-physical-systems, let us consider a video surveillance application depicted by Figure~\ref{fig:Edge_Data_Analytics_Video_Surveillance}. Similarly to the AR application, compute-intensive functions such as \textit{feature extraction} (fE) and \textit{matching} (fM\textit{e}) are assigned to edge platforms.
 %, this time with the purpose of recognizing faces from a police catalog. 
-These functions compose a workflow exposed as a service and consumed by resource-constrained IoT cameras. This service receives video frames at short intervals, from which it extracts facial features matched against a police catalog. A positive identification triggers the execution of a cloud-based service responsible for a more robust analysis able to detect false positives. In this manner, large volumes of data are processed locally, preventing the congestion of the wide area network (WAN) and the centralized services.
+These functions compose a workflow exposed as a service and consumed by resource-constrained IoT cameras. This service receives video frames at short intervals, from which it extracts facial features matched against a police catalog (PC). A positive identification triggers the execution of a cloud-based service (fM\textit{c}) responsible for a more robust analysis able to detect false positives. In this manner, large volumes of data are processed at the edge, preventing the congestion of the wide area network (WAN) and the centralized services.
 
 \begin{figure}[tbp]
 	\centering
 	\includegraphics[width=\linewidth]{Figs/Edge_Data_Analytics_Personal_Assistant.pdf}
-	\caption{Requests to a \textit{health analysis function} (fA) are distributed among edge and cloud platforms by the SEP \textit{Load Balancer}, which takes into account parameters like the function request rate, response time, and latency requirement.} 
+	\caption{Instances of the \textit{health analysis} function (fA) are placed to SEPs by a centralized \textit{Orchestrator}; given the current placement scheme, a \textit{Load Balancer} distributes requests among its local FaaS and the cloud-based FaaS based on the fA requirement for latency and the average response time.}
 	\label{fig:Edge_Data_Analytics_Personal_Assistant}
 \end{figure}
 
@@ -273,16 +276,16 @@ Still in the context of edge data analysis,
 let us imagine that in the future the majority of elderly citizen will be wearing body sensors to collect data about their health status. In the event of an anomalous condition (e.g., the beginning of a heart attack), emergency services should be dispatched immediately to the person location. Moreover, it is very important to provide the person with feedback so she can ask nearby people for their assistance.
 %other people that can provide a first and immediate assistance.
 %The IoT-based heart disease monitoring system for pervasive healthcare service
-The accurate identification of such events, however, requires complex analysis of data from different sensors (e.g., heart rate, oxigen saturation, glucose~\cite{}). Offloading the analysis from all users to the cloud may overload the network and centralized services. Instead, this burden should be shared with SEPs.% composing the mobile networks infrastructure (e.g., base stations, multi-technology aggregation sites, etc~\cite{}). 
+The accurate identification of such events, however, requires complex analysis of data from different sensors (e.g., heart rate, oxigen saturation, glucose~\cite{Li:2017}). Offloading the analysis from all users to the cloud may overload the network and centralized services. Instead, this burden should be shared with SEPs.% composing the mobile networks infrastructure (e.g., base stations, multi-technology aggregation sites, etc~\cite{}). 
 
-The aforementioned examples share one characteristic: their main purpose is to prevent large volumes of data to be sent and processed by distant data centres. In the latter case, providing feedback in a timely manner is important, but does not fall into the category of low ($\leq 100ms$) or ultra-low ($\leq 20ms$) latency requirements. For this kind of application, the offloading of data analysis from the cloud to the edge should be opportunistic and informed by the availability of computing and networking resources, as well as the latency requirement of each function.
+The aforementioned examples share one characteristic: their main purpose is to prevent large volumes of data to be sent and processed by distant data centres. In the latter example, providing feedback in a timely manner is important, but does not fall into the category of low ($\leq 100ms$) or ultra-low ($\leq 20ms$) latency requirements. For this kind of application, the offloading of data analysis from the cloud to the edge should be opportunistic and informed by the availability of computing and networking resources, as well as the latency requirement of each function.
 
-As discussed in the previous section (see Figure~\ref{fig:Mobile_Computation_Offloading}), the proposed architecture enables fine-grained functions to be opportunistically placed onto different platforms. Differently from real-time computation offloading, the placement decision includes cloud-based platforms; this decision can be either orchestrated by a centralized entity, coordinated among different edge and cloud platforms, and involve the participation of client devices~\cite{Mach:2017}. Based on a given placement scheme, an informed \textit{Load Balancer} makes the timely and ultimate decision on the destination of each request arriving at its own SEP.
+As discussed in Section~\ref{sec:SEP_MCO}, the proposed architecture (see Figure~\ref{fig:Mobile_Computation_Offloading}) enables fine-grained functions to be placed onto different platforms. Differently from real-time computation offloading, it now includes cloud-based platforms. This decision can be either orchestrated by a centralized entity~\cite{Taleb:2013}, coordinated among different edge and cloud platforms~\cite{Mach:2017}, and involve the participation of client devices~\cite{OrsiniBL16,Luciano:2018}. Based on a given placement scheme, an informed \textit{Load Balancer} makes the timely decision on the destination of each request arriving at its own SEP.
 
 %Differently from the mobile computation offloading scenario, edge data analysis may tolerate higher delays, in which case a \textit{scheduler} should decide between edge-based and cloud-based services. 
 
 %TODO: improve the scheduling explanation
-Figure~\ref{fig:Edge_Data_Analytics_Personal_Assistant} presents the opportunistic placement of a \textit{health analysis} function (fA) onto edge and cloud platforms. Based on the arrival rate and the availability of resources at the SEP, a centralized \textit{Orchestrator} decides for the placement of fA instances at each platform. In turn, the SEP \textit{Load Balancer} assigns incoming requests to its local FaaS or to the cloud-based FaaS. In either case, upon a heath emergency the analysis function proceeds with two actions: i) the invocation of an emergency service, and ii) the notification of the personal assistant device about the emergency event. For this, the \textit{Load Balancer} must also work as a reverse proxy and assure results to reach client devices regardless of the platform they have been assigned to.
+Figure~\ref{fig:Edge_Data_Analytics_Personal_Assistant} presents the opportunistic placement of a \textit{health analysis} function (fA) onto edge and cloud platforms. Based on the availability of resources at the SEP and the demand for different services, a centralized \textit{Orchestrator} decides for the number of instances hosted by the SEP. In turn, the SEP \textit{Load Balancer} assigns incoming requests to its local FaaS or to the cloud-based FaaS, taking into account the latency requirement and the average response time. Upon a heath emergency, the function proceeds with two actions: i) the invocation of an emergency service, and ii) the notification of the personal assistant device about the emergency. For this, the \textit{Load Balancer} must also work as a \textit{reverse proxy} to assure results will be sent back to client devices regardless of the platform that each request have been assigned to.
 
 %In particular, the scheduling should take into account the latency constraints of each type of service.
 
