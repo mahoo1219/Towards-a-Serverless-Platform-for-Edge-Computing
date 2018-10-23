@@ -98,12 +98,7 @@ For example, in the context of smart cities and cyber-physical-systems, let us c
 %, this time with the purpose of recognizing faces from a police catalog. 
 These functions compose a workflow exposed as a service and consumed by resource-constrained IoT cameras. This service receives video frames at short intervals, from which it extracts facial features matched against a police catalog (PC). A positive identification triggers the execution of a cloud-based service (fM\textit{c}) responsible for a more robust analysis able to detect false positives. In this manner, large volumes of data are processed at the edge, preventing the congestion of the wide area network (WAN) and the centralized services.
 
-\begin{figure}[tbp]
-	\centering
-	\includegraphics[width=\linewidth]{Figs/Edge_Data_Analytics_Personal_Assistant.pdf}
-	\caption{Instances of the \textit{health analysis} function (fA) are placed to SEPs by a centralized \textit{Orchestrator}; given the current placement scheme, a \textit{Load Balancer} distributes requests among its local FaaS and the cloud-based FaaS based on the fA requirement for latency and the average response time.}
-	\label{fig:Edge_Data_Analytics_Personal_Assistant}
-\end{figure}
+
 
 Still in the context of edge data analysis, 
 %other use cases exhibit more strict requirements for latency. For instance, 
@@ -112,14 +107,24 @@ let us imagine that in the future the majority of elderly citizen will be wearin
 %The IoT-based heart disease monitoring system for pervasive healthcare service
 The accurate identification of such events, however, requires complex analysis of data from different sensors (e.g., heart rate, oxigen saturation, glucose~\cite{Li:2017}). Offloading the analysis from all users to the cloud may overload the network and centralized services. Instead, this burden should be shared with SEPs.% composing the mobile networks infrastructure (e.g., base stations, multi-technology aggregation sites, etc~\cite{}). 
 
-The aforementioned examples share one characteristic: their main purpose is to prevent large volumes of data to be sent and processed by distant data centres. In the latter example, providing feedback in a timely manner is important, but does not fall into the category of low ($\leq 100ms$) or ultra-low ($\leq 20ms$) latency requirements. For this kind of application, the offloading of data analysis from the cloud to the edge should be opportunistic and informed by the availability of computing and networking resources, as well as the latency requirement of each function.
+The aforementioned examples share one characteristic: their main purpose is to prevent large volumes of data to be sent and processed by distant data centres. In the latter example, providing feedback in a timely manner is important, but does not fall into the category of low ($\leq 100ms$) or ultra-low ($\leq 20ms$) latency requirements. For this kind of application, the offloading of data analysis from the cloud to the edge should be opportunistic and informed by the availability of computing and networking resources, as well as the characteristics and requirement of each function.
 
-As discussed in Section~\ref{sec:SEP_MCO}, the proposed architecture (see Figure~\ref{fig:Mobile_Computation_Offloading}) enables fine-grained functions to be placed onto different platforms. Differently from real-time computation offloading, it now includes cloud-based platforms. This decision can be either orchestrated by a centralized entity~\cite{Taleb:2013}, coordinated among different edge and cloud platforms~\cite{Mach:2017}, and involve the participation of client devices~\cite{Baresi:2018}. Based on a given placement scheme, an informed \textit{Load Balancer} makes the timely decision on the destination of each request arriving at its own SEP.
+As discussed in Section~\ref{sec:SEP_MCO}, the proposed architecture (see Figure~\ref{fig:Mobile_Computation_Offloading}) enables fine-grained functions to be placed onto different platforms, including cloud-based FaaS. This dynamic decision can be either orchestrated by a centralized entity~\cite{Taleb:2013}, coordinated among different edge and cloud platforms~\cite{Mach:2017}, and involve the participation of client devices~\cite{Baresi:2018}. Based on a given placement scheme, an informed \textit{Load Balancer} makes the timely decision on the destination of each request arriving at its own SEP.
+
+
 
 %Differently from the mobile computation offloading scenario, edge data analysis may tolerate higher delays, in which case a \textit{scheduler} should decide between edge-based and cloud-based services. 
 
-%TODO: improve the scheduling explanation
-Figure~\ref{fig:Edge_Data_Analytics_Personal_Assistant} presents the opportunistic placement of a \textit{health analysis} function (fA) onto edge and cloud platforms. Based on the availability of resources at the SEP and the demand for different services, a centralized \textit{Orchestrator} decides for the number of instances hosted by the SEP. In turn, the SEP \textit{Load Balancer} assigns incoming requests to its local FaaS or to the cloud-based FaaS, taking into account the latency requirement and the average response time. Upon a heath emergency, the function proceeds with two actions: i) the invocation of an emergency service; and ii) the notification of the personal assistant device about the emergency. For this, the \textit{Load Balancer} must also work as a \textit{reverse proxy} to assure results will be sent back to client devices regardless of the platform each request have been assigned to.
+\begin{figure}[tbp]
+	\centering
+	\includegraphics[width=\linewidth]{Figs/Edge_Data_Analytics_Personal_Assistant.pdf}
+	\caption{Instances of the \textit{health analysis} function (fA) are placed to SEPs by a centralized \textit{Orchestrator}; given the current placement scheme, a \textit{Load Balancer} distributes requests among its local FaaS and the cloud-based FaaS based on the fA requirement for latency and the average response time.}
+	\label{fig:Edge_Data_Analytics_Personal_Assistant}
+\end{figure}
+
+Figure~\ref{fig:Edge_Data_Analytics_Personal_Assistant} presents the opportunistic placement of a \textit{health analysis} function (fA) onto edge and cloud platforms. Based on the availability of resources at each SEP and the demand for different services, a centralized \textit{Orchestrator} decides for the maximum number of function instances tha can be allocated. In turn, the SEP \textit{Load Balancer} assigns incoming requests to its local FaaS or to the cloud-based FaaS, taking into account the latency requirement and the average response time. 
+
+Still in the same example, upon a heath emergency the fA function proceeds with two actions: i) the invocation of an external emergency service; and ii) the notification of the personal assistant device about the emergency. For this, the \textit{Load Balancer} must also work as a \textit{reverse proxy} to assure results will be sent back to personal assistance devices regardless of the platform each request have been assigned to.
 
 %In particular, the scheduling should take into account the latency constraints of each type of service.
 
