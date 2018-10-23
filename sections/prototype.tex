@@ -36,15 +36,19 @@ For the materialization of a SEP caching service discussed in Section~\ref{sec:S
 
 
 
-OpenWhisk lacks support for the dynamic placement of functions based on latency requirements and other criteria. However, it features a \textit{Load Balancer} that decides, among distributed pools of containers, where to place requests. Each pool is managed by an \textit{Invoker} component. Invokers health is checked periodically; they communicate with Load Balancer using \textit{Akka}, an implementation of the \textit{Actor Model}.
+OpenWhisk lacks support for the dynamic placement of functions based on latency requirements and other criteria. Nonetheless, it features a \textit{Load Balancer} that decides, among distributed pools of containers, where to place requests. Each pool is interfaced and managed by an \textit{Invoker} component. Invokers notify their health status with periodic heartbeats; they communicate with the \textit{Load Balancer} through messages buffered and persisted by \textit{Kafka}, a high-throughput, distributed, publish-subscribe messaging system.
 
-Our SEP prototype extends OpenWhisk's native Load Balancer to mimic a decentralized orchestration within a cloud-edge deployment (see Fig.~\ref{fig:Mobile_Computation_Offloading_F2}). More precisely, the \textit{Load Balancer} hosted by the SEP prototype is aware of two invokers: a local one and another hosted by a cloud platform. Our extension consists of two modifications: i) the reference to the cloud-based \textit{Invoker}, which pings back to the SEP's \textit{Load Balancer}; and 2) prioritizing the local Invoker whenever the CPU and memory load at the SEP is below 90\%.   
-
-
-Figure~\ref{fig:SEP_Placement} depicts the decentralized orchestration used by the SEP prototype. The evaluation of more sophisticated orchestration strategies is out of the scope of this work. 
+%an implementation of the \textit{Actor Model} featuring reliable queues.
 
 
-Contrasting with real-time FaaS, we further extended OpenWhisk's Load Balancer with scheduling capabilities. The idea is to take different latency requirements into account and prioritize those with more strict deadlines. For this, requests arriving at the SEP's Controller are sorted by means of a \textit{deadline first} algorithm before been distributed by the Load Balancer.
+For evaluation purposes, our SEP prototype extends OpenWhisk's native \textit{Load Balancer} to decide among edge and cloud-based execution of hosted functions. For this, the SEP \textit{Load Balancer} is aware of two invokers: a local one, and another hosted by a second node mimicking a cloud deployment. Our extension consists of two modifications: i) the initialization of an external \textit{Invoker} referencing the SEP \textit{Load Balancer}; and 2) the prioritization of the local Invoker whenever the CPU and memory load at the SEP is below 90\%. 
+
+Prototyping a \textit{Centralized Orchestrator} (CO) required modifications from the \textit{Invoker} side. More precisely, the activation of a given function now takes as parameter the maximum number of runtime instances a given function can have --- as decided by the CO. In case this number has been achieved, the function activation fails and the original request is put back in queue, prompting the \textit{Load Balancer} to diverge requests to the cloud. Figure~\ref{fig:SEP_Placement} depicts the orchestration used by the SEP prototype. 
+
+
+%The evaluation of more sophisticated orchestration strategies is out of the scope of this work. 
+
+%Contrasting with real-time FaaS, we further extended OpenWhisk's Load Balancer with scheduling capabilities. The idea is to take different latency requirements into account and prioritize those with more strict deadlines. For this, requests arriving at the SEP's Controller are sorted by means of a \textit{deadline first} algorithm before been distributed by the Load Balancer.
 
 \subsection{Stateful Services}
 
