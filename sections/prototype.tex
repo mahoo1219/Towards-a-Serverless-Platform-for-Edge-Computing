@@ -1,0 +1,68 @@
+\section{SEP Prototype}~\label{sec:prototype}
+
+With the purpose of demonstrating the feasibility of a serverless edge platform, we assembled and extended state-of-art open source tools to materialize the proposed architecture for different application scenarios.
+%, evaluating it in different aspects. 
+%Figure~\ref{fig:Serverless_Edge_Platform_Overview} presets an overview of the SEP prototype containing all the proposed services. In addition to the services discussed in Section~\ref{sec:SEP}, it includes a \textit{Reverse Proxy}, which is responsible for proxying external HTTP/WebSocket requests to internal platform services.
+
+%\begin{figure}[tbp]
+%	\centering
+%	\includegraphics[width=1\linewidth]{Figs/Serverless_Edge_Platform_Overview.pdf}
+%	\caption{Overview of a SEP comprising all services}
+%	\label{fig:Serverless_Edge_Platform_Overview}
+%\end{figure}
+
+\subsection{Latency-Sensitive FaaS}
+
+OpenWhisk~\cite{OpenWhisk} is a state-of-art tool implementing the FaaS model. Originally developed by IBM, it is now an open source project incubated by Apache. It is also the most mature open source FaaS tool available. OpenWhisk is the central component in the proposed SEP architecture, 
+%as it takes care of the dynamic creation and termination of containerized environments. More precisely, 
+as it takes of orchestrating the creation of Docker containers~\footnote{The tool recently added support other container engines} with a specific runtime (e.g., a NodeJS, python, or Java) supporting the execution of stateless functions.
+
+%upon the activation of actions --- a stateless function written in one of the many languages supported by the tool.
+
+%OpenWhisk is implemented as an event-driven platform. 
+In OpenWhisk, functions are activated by rules associated with triggers, which in turn are mapped to internal and external events, including HTTP requests. Currently, the tool does not provide support for the WebSocket protocol. Coherently with what has been discussed in Section~\ref{sec:SEP_MCO}, we have extended OpenWhisk to enable a more efficient communication between SEPs and edge devices hosting real-time and interactive applications.  
+
+OpenWhisk supports action sequences, which allow the definition of a function execution flow, as discussed in Section~\ref{sec:SEP_MCO}. Our prototype exploits this feature for the definition of a \textit{workflow service}. 
+
+For the materialization of a SEP caching service discussed in Section~\ref{sec:SEP_MCO}, we adopted \textit{Minio}, an open source and lightweight object storage tool. Minio is compatible with \textit{AWS S3} --- considered the state-of-art object storage service --- and features native integration with different types of notification services. Finally, an API allows the creation, update, and deletion of files. These characteristics are particularly important in the context of the proposed platform, as object events can trigger the execution of functions, and functions can access stored objects by means of API calls.
+
+%an event-driven serverless architecture
+
+%a prototype of the caching service discussed in ~\ref{sec:SEP_MCO} was implemented as a separated module in Python language. Figure~\ref{fig:SEP_Low_Latency_FaaS} presents the resulting platform architecture.
+
+%existing containers and an \textit{Invoker} responsible for the creation and termination of containers. 
+
+\subsection{Opportunistic FaaS}
+
+
+
+OpenWhisk lacks support for the dynamic placement of functions based on latency requirements and other criteria. However, it features a \textit{Load Balancer} that decides, among distributed pools of containers, where to place requests. Each pool is managed by an \textit{Invoker} component. Invokers health is checked periodically; they communicate with Load Balancer using \textit{Akka}, an implementation of the \textit{Actor Model}.
+
+Our SEP prototype extends OpenWhisk's native Load Balancer to mimic a decentralized orchestration within a cloud-edge deployment (see Fig.~\ref{fig:Mobile_Computation_Offloading_F2}). More precisely, the \textit{Load Balancer} hosted by the SEP prototype is aware of two invokers: a local one and another hosted by a cloud platform. Our extension consists of two modifications: i) the reference to the cloud-based \textit{Invoker}, which pings back to the SEP's \textit{Load Balancer}; and 2) prioritizing the local Invoker whenever the CPU and memory load at the SEP is below 90\%.   
+
+
+Figure~\ref{fig:SEP_Placement} depicts the decentralized orchestration used by the SEP prototype. The evaluation of more sophisticated orchestration strategies is out of the scope of this work. 
+
+
+Contrasting with real-time FaaS, we further extended OpenWhisk's Load Balancer with scheduling capabilities. The idea is to take different latency requirements into account and prioritize those with more strict deadlines. For this, requests arriving at the SEP's Controller are sorted by means of a \textit{deadline first} algorithm before been distributed by the Load Balancer.
+
+\subsection{Stateful Services}
+
+To address the need of stateful services, we have enabled stateful application partitions to run in a similar environment from stateless functions by extending OpenWhisk's Invoker. In contrast with stateless functions --- which can be executed by any of the existing containers hosting its runtime environment --- stateful services are identified by a token and mapped to one specific container upon its setup at the beginning of a session. 
+
+Every invocation to the stateful service is delegated to the corresponding container by means of an \textit{update} command. This additional command specifies the application logic to be performed along with any parameters from the original request. The resulting mechanism enables state to be consistently evolved at each invocation from one or distinct clients within the same session. Figure~\ref{} illustrates the stateful service life-cycle.
+
+\subsection{Publish-Subscribe Service: RabbitMQ}
+
+The need for a publish-subscribe notification service is addressed with the adoption of RabbitMQ, an open source tool for...
+
+\subsection{Reverse Proxy: Nginx}
+
+Last but not least, SEPs should interface with the external world by means of a reverse proxy. Its role is to map external requests (e.g., HTTP, WebSocket) to internal services (e.g., FaaS, publish-subscribe system, etc). 
+
+Nginx is a state-of-art tool open source tool featuring, among others, a reverse proxy. Similarly to Apache, it allows the specification of endpoints that are mapped to internal applications. Due to its maturity and popularity, we adopted Nginx as the reverse proxy in our SEP prototype. This tool is also naively integrated with OpenWhisk.
+
+\subsection{SEP Product Line}
+
+%TODO: contextualize the paragraph below
+Figure~\ref{} represents the serverless edge platform as a software product line~\cite{} with product variants targeting different types of edge infrastructure and application scenarios.

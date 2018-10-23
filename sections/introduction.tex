@@ -1,0 +1,44 @@
+\section{Introduction}
+
+The advent of real-time, compute- and data-intensive applications empowered by mobile and IoT devices at the network edge poses challenges to the centralized data centre model. The network latency from edge devices to cloud data centres is prohibitive for most real-time and interactive applications, preventing computation offloading from resource-constrained edge devices to distant cloud servers. Moreover, the transport and analysis of exponentially larger volumes of data by centralized services may result in network bottlenecks and consequently low throughput. 
+
+Targeting the aforementioned problems, edge computing --- also known as fog computing~\cite{Bonomi:2012}, among other similar concepts~\cite{Satyanarayanan:2009,Taleb:2013,ETSI:MEC:2016:03} --- aims to fill the gap between centralized data centres and applications at the network edge with a dense geographical distribution of computing and storage resources. The intrinsic challenges for its realization brought attention from the research community, whose contributions focused on different aspects such as the management of edge node resources~\cite{N.Wang:2017}; the placement and migration of application components and services onto distinct edge-cloud nodes~\cite{Wang:2015a,Wang:2017,Machen:2018}; and the scheduling of computation offloading from mobile and IoT devices~\cite{Liu:2016, OrsiniBL16}. Nonetheless, in many works the concept of an edge node --- or platform, using ETSI's terminology~\cite{ETSI:MEC:2016:03} --- remain abstract; the fulfillment of different application scenarios requires further clarification from the edge platform architecture and implementation perspectives.
+
+%In this work, we focus on the materialization of an edge platform.
+
+
+
+%fine-grained nodes requires an efficient management of resources to render edge-based solutions feasible and scalable.
+
+%For this, the resources must be allocated when actually needed in an automated way. 
+
+
+
+%that does not exhibit virtually unlimited resources as cloud data centres~\cite{}. 
+
+%Notwithstanding the benefits of serverless computing, the application scenarios of edge computing have particular needs that requires the optimization of the existing FaaS model and technology. Also, it requires additional services and mechanisms composing the building blocks of a platform able to satisfy edge application needs.
+
+In this paper, we address the main application scenarios of edge computing with a serverless edge platform. 
+%In the last years, 
+Serverless computing has been proposed as an alternative execution model for cloud computing~\cite{Lloyd18serverless}. In a serverless architecture, infrastructure management is fully delegated to third party providers, who takes care of dynamically provisioning and allocating resources --- thus the name \textit{serverless}. The function-as-a-service model (FaaS) realizes a serverless architecture by allowing application logic, written as stateless functions, to be executed on demand by containerized environments without pre-allocating resources. 
+
+The contributions of this paper are threefold. Firstly, we motivate the adoption of a serverless architecture for the materialization of edge platforms. Secondly, the main application scenarios of edge computing are discussed with details about its specific requirements and matched with the platform services proposed for their realization. Finally, we extended OpenWhisk --- a state-of-art FaaS platform --- with optimizations and additional tools composing a platform prototype. 
+%evaluated and discussed in terms of resource utilization footprint and the satisfaction of different application requirements. 
+Results have shown the feasibility and the benefits of a serverless edge platform.
+
+
+%we discuss the need for different platform services composing the building blocks of a serverless edge platform; finally, we evaluate a platform prototype composed of state-of-art tools satisfying the identified needs.
+
+The paper is organized as follows. Section~\ref{sec:background} presents the main characteristics of serverless computing.
+%and the function-as-a-service model justifying their adoption. 
+Throughout Section~\ref{sec:SEP}, the building blocks of a serverless edge platform are presented and motivated by means of different application scenarios. Section~\ref{sec:prototype} presents the tools and architecture composing the platform prototype, whilst Section~\ref{sec:evaluation} discusses evaluation results. Finally, Section~\ref{sec:conclusions} concludes this work with final discussions and future works.
+
+%. A serverless platform for edge computing must address these needs with the optimization of the existing FaaS model and technology along with the additional services and mechanisms targeting different application scenarios and edge computing infrastructures.
+
+%The benefits of adopting a serverless architecture with edge computing to enable low-latency applications has been discussed elsewhere~\cite{}. 
+
+%Notwithstanding this, details on its realization are still missing. 
+%target the materialization of such architecture by proposing an edge platform based on the serverless architecture. In addition to mobile computation offloading, the proposed platform also targets the in-transit analysis of data-intensive applications by edge nodes.
+
+
+%Responsibility over infrastructure and resource provisioning is transferred to providers.
