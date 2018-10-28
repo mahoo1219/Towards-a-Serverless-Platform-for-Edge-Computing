@@ -180,21 +180,22 @@ To illustrate this requirement, let us think of a mobile multiplayer game (MMG).
 
 To increase the game popularity, a new interactive feature could enable users in the same city area to start game battles involving their \textit{Pokemons}. Following a conventional multiplayer game architecture, an authoritative service is designed to host the game battle state and business logic. In particular, the state represents a battle session, whilst business logic is responsible for updating the state according to user inputs and other events. 
 
+The support for stateful services comes with a cost. To address the specific use cases requiring stateful services, a serverless edge platform should impose limitations. More precisely, stateful services should be designed to last for a limited duration corresponding to the lifetime of a specific latency-sensitive use case. Similarly to its stateless counterpart, it should be created and terminated on demand in a timely manner without preallocating resources. Finally, to prevent the overhead associated with replicated state, stateful instances should be vertically scaled --- with the dynamic allocation of CPU/memory resources --- in detriment of horizontal scaling through instance replication.
+
+
 Addressing the aforementioned example, the solution depicted in Figure~\ref{fig:Steteful_Edge_MMG} exploits two benefits from stateful services: first, it prevents the overhead of transferring to the service, at each user interaction, the whole state of the battle; second, it allows an authoritative service to manage changes to the game state that may not be safely delegated to clients, who otherwise could modify the local game logic and state to their own advantage.
 %(e.g., in a P2P architecture)
-Composing the rest of the application, other delay-tolerant features (e.g., players scores) should be managed by resourceful, long-living cloud-based services, accessed without SEP inter-mediation. Finally, to prevent the overhead associated with replicated state, stateful instances should be vertically scaled --- with the dynamic allocation of CPU/memory resources --- in detriment of horizontal scaling through instance replication. %Figure~\ref{fig:Steteful_Edge_MMG} depicts the resulting architecture.%; instances of the stateful \textit{multiplayer battle service} are hosted by the serverless edge platform precisely when needed. 
-
-The support for stateful services comes with a cost. To address the specific use cases requiring stateful services, a serverless edge platform should impose limitations. More precisely, stateful services should be designed to last for a limited duration corresponding to the lifetime of a specific latency-sensitive use case. Similarly to its stateless counterpart, it should be created and terminated on demand in a timely manner without preallocating resources.
-
-
-
-
+Composing the rest of the application, other delay-tolerant features (e.g., players scores) should be managed by resourceful, long-living cloud-based services, accessed without SEP inter-mediation.  %Figure~\ref{fig:Steteful_Edge_MMG} depicts the resulting architecture.%; instances of the stateful \textit{multiplayer battle service} are hosted by the serverless edge platform precisely when needed. 
 
 \subsection{On Premise Edge}
 
-Serverless computing has been conceived as a cloud model. Notwithstanding this, a serverless architecture can be adopted by on premise infrastructures to deliver self-managed services to applications from scenarios like smart home, smart office, and Industry 4.0. 
+Among the distinct flavors of edge computing, one addresses the need of applications from the Industry 4.0, also known as IoT 4.0. Similarly, edge computing is also seen as an enabling technology towards smart homes and offices. For these scenarios, edge deployments may consist of on premise infrastructure (e.g., Gateways, single-board computers, or full scale servers).
 
+Differently from the outsourcing model popularized by cloud computing, on premise resources are acquired and deployed to cope with the requirements from specific applications whose demand is known beforehand. Still, an efficient and automated management of resources is needed to render on premise solutions economic. This is even more so for scenarios in which the demand for services is expected to change (e.g., following the daily changes in a fabric production line). 
 
+Serverless computing and the FaaS model were conceived as an alternative model targeting cloud computing. As this model evolves and the benefits of the containers technology are consolidated by means of more robust platforms and tools, the adoption of a serverless architecture empowered by the FaaS model becomes attractive also for on premise deployment scenarios. In this sense, the advantages characterizing the FaaS model may be exploited in the materialization of on premise edge computing platforms.
+
+To illustrate this kind of scenario, let us consider...
 
 %For this, on premise SEPs should exhibit the computational resources and services (discussed along the present section) compatible with targeted applications. Also, on premise and on demand SEPs can form an infrastructure continuum supporting mobility.
 
