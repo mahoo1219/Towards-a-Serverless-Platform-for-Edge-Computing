@@ -4,20 +4,20 @@
 
 The offloading of computation from mobile devices to cloud servers was firstly addressed by the concept of Mobile Cloud Computing~\cite{Khan:14}. Its main purpose was to enable rich mobile applications to be executed in resource-constrained mobile devices. However, this approach is limited by network latency, which is prohibitive for most real-time and interactive applications.
 
-Addressing the network latency problem, \textit{cloudlets}~\cite{Satyanarayanan:2009} --- a precursor of edge computing --- have been proposed as resource-rich computer or cluster of computers  accessible through wireless local area network (WLAN). Their purpose is to enable the offloading of latency-sensitive computation from mobile and, more recently, general IoT devices. 
+Addressing the network latency problem, \textit{cloudlets}~\cite{Satyanarayanan:2009} --- a precursor of edge computing --- have been proposed as resource-rich computer or cluster of computers  accessible through wireless local area network (WLAN). Their purpose is to enable the offloading of latency-sensitive and computation-intensive tasks from mobile and, more recently, general IoT devices~\cite{Satyanarayanan:2017}.  
 
 %To address this kind of edge computing scenario, an edge platform should support the execution of \textit{latency-sensitive} tasks. With the evolution of mobile devices capabilities, \textit{computing-intensive} tasks from real-time applications are of particular interest.
 
-To illustrate this scenario, let us consider an Augemented Reality (AR) application that relies on two tasks: one for \textit{feature extraction} and another for \textit{feature matching}. The first handles the extraction of features from captured video frames, whilst the second matches theses features against a catalog (e.g., points of interest in a city area). 
+To illustrate this scenario, let us consider an \textit{Augemented Reality} (AR) application that relies on two tasks: one for \textit{feature extraction} and another for \textit{feature matching}. The first handles the extraction of features from captured video frames, whilst the second matches theses features against a catalog (e.g., points of interest in a city area). 
 %By offloading these tasks to a surrogate edge platform, the application is able to recognize more POIs while avoiding to stress the mobile device.
 These computation-intensive, latency-sensitive tasks are strong candidates for been offloaded from hosting devices like smartphones and tablets.
 
-Targeting these requirements, a serverless edge platform (SEP) can exploit the FaaS model to allow tasks such as the \textit{feature extraction} and \textit{matching} to be written as stateless functions and consumed as web services. The resulting architecture would consist of two independent, fine-grained and highly cohesive FaaS-based services\footnote{We do not use the microservice terminology despite the  characteristics shared by FaaS and the microservices architecture}. Alternatively, both functions could compose a single, coarser service. Its main advantage would be the reduced communication overhead. However, in the context of edge computing, separating functions into distinct services has the following benefits: i) it allows different functions to be consumed independently by distinct applications (e.g., utility functions); and ii) it allows functions to be deployed and scaled independently.%; and iii) it allows the dynamic placement of functions into different edge and cloud platforms.
+Targeting these requirements, a \textit{Serverless Edge Platform} (SEP) can exploit the FaaS model to allow tasks such as the \textit{feature extraction} and \textit{matching} to be written as stateless functions and consumed as web services. The resulting architecture would consist of two independent, fine-grained and highly cohesive FaaS-based services\footnote{We do not use the microservice terminology despite the  characteristics shared by FaaS and the microservices architecture}. Alternatively, both functions could compose a single, coarser service. Its main advantage would be the reduced communication overhead. However, in the context of edge computing, separating functions into distinct services has the following benefits: i) it allows different functions to be consumed independently by distinct applications (e.g., utility functions); and ii) it allows functions to be deployed and scaled independently.%; and iii) it allows the dynamic placement of functions into different edge and cloud platforms.
 
-The last advantage is particularly important, as different types of edge infrastructures~\cite{Satyanarayanan:2009,Taleb:2013,Liu:2014,K.Wang:2015} converge in one aspect: their limitation of computational resources. The separation of functions with different responsibilities and requirements into independent services allows each function to be provided by distinct edge platforms; the decision of where to execute each function will depend on factors such as the characteristics and requirements of each function, the capabilities of distinct edge platforms, and the network latency and throughput among platforms and devices. Accordingly, in a hierarchical topology~\cite{Liu:2014}, data-intensive functions are best candidates for been placed in close proximity to the edge, whereas computing-intensive functions may require more powerful resources from intermediary edge nodes. 
+The last advantage is particularly important, as different types of edge infrastructures~\cite{Satyanarayanan:2009,Taleb:2013,Liu:2014,K.Wang:2015} converge in one aspect: their limitation of computational resources. The separation of functions with different responsibilities and requirements into independent services allows each function to be provided by distinct edge platforms; the decision of where to execute each function will depend on factors such as the characteristics and requirements of each function, the capabilities of distinct edge platforms, and the network latency and throughput among platforms and devices. Accordingly, in a hierarchical topology~\cite{Liu:2014}, latency-sensitive and data-intensive functions are best candidates for been placed in close proximity to the edge, whereas computing-intensive functions may require more powerful resources from intermediary edge nodes. 
 
 Figure~\ref{fig:Mobile_Computation_Offloading_F1} depicts the two AR functions as a single service (one request per offloading), whilst Figure~\ref{fig:Mobile_Computation_Offloading_F2} depicts each function as an independent service (two requests per offloading). 
-In the first approach, mobile devices (md) connected to SEP A are unable to offload computation, as the fEM function is currently unavailable at that platform and the network throughput among these SEPs is insufficient for delegating requests with a video frame payload.
+In the first approach, mobile devices (md) connected to SEP A are unable to offload computation, as the fEM function is currently unavailable at that platform and the network throughput among surrogate SEPs is insufficient for delegating requests with a video frame payload.
 In the second approach, data-intensive \textit{feature extraction} (fE) is performed by both SEPs. Conversely, \textit{feature matching} (fM) is unavailable at SEP A; fM requests targeting this platform are offloaded to SEP B by its \textit{Load Balancer},
 %or to the cloud by a load balancer, 
 thanks to the reduced payload size (frame features extracted by fE) and the low latency among these surrogate platforms. 
@@ -33,7 +33,7 @@ thanks to the reduced payload size (frame features extracted by fE) and the low 
 	\label{fig:Mobile_Computation_Offloading_Workflow}
 \end{figure}
 
-Notwithstanding the benefits of adopting the FaaS model,
+\textbf{\textit{Opzimizations:}} Notwithstanding the benefits of adopting the FaaS model,
 %in the provisioning of computing services, 
 the satisfaction of low-latency requirements by the serverless edge platform requires further optimization.
 
@@ -57,25 +57,26 @@ Similarly to functions, workflows are triggered by events; at each intermediary 
 \begin{figure}[tbp]
 	\centering
 	\includegraphics[width=\linewidth]{Figs/Mobile_Computation_Offloading_Caching.pdf}
-	\caption{A SEP with three instances of the \textit{feature extraction} (fE) and two instances of the \textit{feature matching} (fM) functions; a local copy of the POI catalog (PC) is fetched once from a cloud storage service and served to the fM instances.} 
+	\caption{A SEP with three instances of the \textit{feature extraction} (fE) and two instances of the \textit{feature matching} (fM) functions; a copy of the POI catalog (PC) used by fM instances is fetched once from a cloud storage service} 
 	\label{fig:Mobile_Computation_Offloading_Caching}
 \end{figure}
 
-Last but not least, existing FaaS platforms (e.g., AWS Lambda and Apache OpenWhisk) enforce a programming model~\cite{AWSLambda,OpenWhisk} in which functions have access to a transient folder without guaranteeing that subsequent invocations will be executed by the same containerized environment. %Thus, each invocation must check whether cached data is available. 
-In the context of real-time applications, retrieving extensive data sets may add prohibitive overhead. For instance, in the AR example, a POI catalog (circa 1Gb) is employed to identify points of interest against their matched features. Due to size limitations, it can not be packed with the function source code, but needs to be retrieved dynamically.
+Last but not least, existing FaaS platforms (e.g., AWS Lambda and Apache OpenWhisk) enforce a programming model~\cite{AWSLambda,OpenWhisk} in which functions have access to a transient container folder without guaranteeing that subsequent invocations will be executed by the same container. %Thus, each invocation must check whether cached data is available. 
+In the context of real-time applications, retrieving extensive data sets may add prohibitive overhead. For instance, in the AR example, a POI catalog (circa 1Gb) is used to identify points of interest against their matched features. Due to size limitations, it can not be packed with the function source code, but needs to be retrieved dynamically by each containerized runtime instance.
 %Cloud vendors provide storage services as part of their platform ecosystem. 
 
 %TODO: make it consistent with the PROTOTYPE Section
 %To address the need of edge services with dependency to large data sets
-Addressing the aforementioned issue, we propose to equip SEPs with a \textit{Caching Service}. This service would allow functions to fetch data from cloud-based storage services and keep it available locally for mitigating networking overhead. More precisely, the \textit{Caching Service} would consist of an object-based storage system (e.g., AWS S3), in which files are associated with metadata.  
-
+Addressing the aforementioned issue, we propose to equip SEPs with a \textit{Caching Service}. This service would allow functions to fetch data from cloud-based storage services and keep it available at the edge for mitigating networking overhead. 
+%More precisely, the \textit{Caching Service} would consist of an object-based storage system (e.g., AWS S3), in which files are associated with metadata.  
 To make use of this service, SEP functions add files passing their cloud URI.
 % which should return a valid file format.
 % --- and an optional expiration policy. 
-The caching service stores the file along with the metadata containing its URI and frequency of access; subsequent requests are served without networking overhead. Figure~\ref{fig:Mobile_Computation_Offloading_Caching} illustrates the interplay between the caching service storing a POI catalog (PC) retrieved from a cloud storage and multiple runtime instances of the \textit{feature matching} function.
+The Caching Service stores the file along with the metadata containing its URI and frequency of access; subsequent requests are served without networking overhead. 
 
+Figure~\ref{fig:Mobile_Computation_Offloading_Caching} illustrates the interplay between the Caching Service storing a POI catalog (PC) retrieved from a cloud storage and multiple runtime instances of the \textit{feature matching} function.
 %TODO: move this to the prototype section?
-%To support different kinds of edge infrastructure, the SEP caching service should rotate cached files according to the availability of storage resources and the access frequency of cached files. As such, files accessed less frequently are subject for been replaced in case of resource contention. 
+To support different kinds of edge infrastructures, the SEP caching service should rotate cached files according to the availability of storage resources and the access frequency of cached files. %As such, files accessed less frequently are subject for been replaced in case of resource contention. 
 %%Files without an expiration date are replaced only in case of resource contention following the access frequency policy. 
 
 
