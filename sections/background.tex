@@ -5,11 +5,11 @@
 %data size as a criteria for the offloading decision
 \begin{figure*}[tbp]
 	\centering
-	\captionsetup[subfigure]{width=0.48\linewidth}
-	\subfloat[Both \textit{feature extraction} and \textit{matching} compose a single service (fEM); mobile devices (md) are unable to offload computation to SEP A, whose resources have been allocated to other functions; computation is offloaded to SEP B with one (1x) \textit{HTTP request} per video frame.\label{fig:Mobile_Computation_Offloading_F1}] {\includegraphics[width=0.48\textwidth]{Figs/Mobile_Computation_Offloading_F1.pdf}}
+	\captionsetup[subfigure]{width=0.47\linewidth}
+	\subfloat[Both \textit{feature extraction} and \textit{matching} compose a single service (fEM); mobile devices (md) are unable to offload computation to SEP A, whose resources have been allocated to other functions; computation is offloaded to SEP B with one (1x) \textit{HTTP request} per video frame.\label{fig:Mobile_Computation_Offloading_F1}] {\includegraphics[width=0.47\textwidth]{Figs/Mobile_Computation_Offloading_F1.pdf}}
 	~
-	\captionsetup[subfigure]{width=0.51\linewidth}
-	\subfloat[Data-intensive \textit{feature extraction} (fE) is performed by SEP A and B; whereas \textit{feature matching} (fM) is offloaded from SEP A to SEP B or to a Regional SEP by a \textit{Load Balancer}. In total, computation is offloaded to either SEP with two (2x) \textit{HTTP requests} per video frame.\label{fig:Mobile_Computation_Offloading_F2}] {\includegraphics[width=0.51\textwidth]{Figs/Mobile_Computation_Offloading_F2.pdf}}
+	\captionsetup[subfigure]{width=0.515\linewidth}
+	\subfloat[Data-intensive \textit{feature extraction} (fE) is performed by SEPs A and B; whereas \textit{feature matching} (fM) is offloaded from SEP A to B or a Regional SEP by a \textit{FaaS Controller}. In total, computation is offloaded with two (2x) \textit{HTTP requests} per video frame (SEP B), plus one (1x) inter-platform fM request (SEP A).\label{fig:Mobile_Computation_Offloading_F2}] {\includegraphics[width=0.515\textwidth]{Figs/Mobile_Computation_Offloading_F2.pdf}}
 	\caption{\textit{Feature extraction} and \textit{matching} functions from the AR example forming a single (a), and two fine-grained services (b)} \label{fig:Mobile_Computation_Offloading}
 \end{figure*}
 
