@@ -120,15 +120,6 @@ The aforementioned examples share one characteristic: their main purpose is to p
 	\label{fig:Edge_Data_Analytics_Personal_Assistant}
 \end{figure}
 
-
-
-\begin{figure}[b]
-	\centering
-	\includegraphics[width=\linewidth]{Figs/Edge_Load_Placement}
-	\caption{Distribution of the workload for distinct functions among local SEPs, regional SEPs, and cloud-based FaaS platforms by hierarchical \textit{load balancers}.}
-	\label{fig:Edge_Load_Placement}
-\end{figure}
-
 As discussed in Section~\ref{sec:SEP_MCO}, the proposed architecture (see Figure~\ref{fig:Mobile_Computation_Offloading}) enables fine-grained functions to be placed onto different platforms. In addition to SEPs, delay-tolerant functions can be also deployed to cloud-based FaaS platforms. The resulting placement decision can be either orchestrated by a centralized entity~\cite{Taleb:2013}, coordinated among hierarchical edge and cloud platforms~\cite{Mach:2017}, and involve the participation of client devices~\cite{Baresi:2018}. The placement goal is to optimize the allocation of SEP resources, considering the \textit{utility} of each function (e.g. in mitigating network bottleneck and the workload of centralized services). Based on a given placement scheme, an informed \textit{Load Balancer} makes the timely decision on the destination of requests, taking into account the average response time of each function and its requirement for latency.% arriving at each SEP.
 %arriving at its own SEP.
 
@@ -145,6 +136,12 @@ Still in Figure~\ref{fig:Edge_Data_Analytics_Personal_Assistant} example, upon a
 
 Concluding this section, Figure~\ref{fig:Edge_Load_Placement} presents the distribution of the workload for different types of functions. Functions with stringent requirements for latency (A) and throughput (B) are served by SEPs accessible through WLAN; other latency-sensitive (C) and data-intensive (D) functions are served by regional SEPs covering a metropolitan network area (MAN); remaining workload, including data-intensive workload extrapolating edge capabilities (E), is served by cloud platforms. 
 
+\begin{figure}[b]
+	\centering
+	\includegraphics[width=\linewidth]{Figs/Edge_Load_Placement}
+	\caption{Distribution of the workload for distinct functions among local SEPs, regional SEPs, and cloud-based FaaS platforms by hierarchical \textit{load balancers}.}
+	\label{fig:Edge_Load_Placement}
+\end{figure}
 
 
 %In particular, the scheduling should take into account the latency constraints of each type of service.
@@ -222,7 +219,7 @@ Last but not least, on premise and on demand edge infrastructures may form a com
 \begin{figure}[b]
 	\centering
 	\includegraphics[width=0.95\linewidth]{Figs/Edge_Cloud_Continuum}
-	\caption{Different types of SEPs and a cloud FaaS forming a computing continuum; applications hosted by mobile devices switch between on premise and on demand SEPs}
+	\caption{Different types of edge infrastructure forming a computing continuum; applications hosted by mobile devices switch between on premise (orange) and on demand (blue) SEPs.}
 	\label{fig:Edge_Cloud_Continuum}
 \end{figure}
 
