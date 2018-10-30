@@ -14,13 +14,13 @@ These computation-intensive, latency-sensitive tasks are strong candidates for b
 
 Targeting these requirements, a \textit{Serverless Edge Platform} (SEP) can exploit the FaaS model to allow tasks such as the \textit{feature extraction} and \textit{matching} to be written as stateless functions and consumed as web services. The resulting architecture would consist of two independent, fine-grained and highly cohesive \textit{FaaS-based services}\footnote{We do not use the microservice terminology despite the  characteristics shared by FaaS and the microservices architecture}. Alternatively, both functions could compose a single, coarser service. Its main advantage would be the reduced communication overhead. However, in the context of edge computing, separating functions into distinct services has the following benefits: i) it allows different functions to be consumed independently by distinct applications (e.g., utility functions); and ii) it allows functions to be deployed and scaled independently.%; and iii) it allows the dynamic placement of functions into different edge and cloud platforms.
 
-The last advantage is particularly important, as different types of edge infrastructures~\cite{Satyanarayanan:2009,Taleb:2013,Liu:2014,K.Wang:2015} converge in one aspect: their limitation of computational resources. The separation of functions with different responsibilities and requirements into independent services allows each function to be provided by distinct edge platforms; the decision of where to execute each function will depend on factors such as the characteristics and requirements of each function, the capabilities of distinct edge platforms, and the network latency and throughput among platforms and devices. Accordingly, in a multi-level topology~\cite{Liu:2014}, latency-sensitive and data-intensive functions are best candidates for been placed in close proximity to the edge, whereas computing-intensive functions may require more powerful resources from intermediary edge nodes.
+The last advantage is particularly important, as different types of edge infrastructures~\cite{Satyanarayanan:2009,Taleb:2013,Liu:2014,K.Wang:2015} converge in one aspect: their limitation of computational resources. The separation of functions with different responsibilities and requirements into independent services allows each function to be provided by distinct edge platforms; the decision of where to execute each function will depend on factors such as the characteristics and requirements of each function, the capabilities of distinct edge platforms, and the network latency and throughput among platforms and devices. Accordingly, in a multi-level topology~\cite{Liu:2014}, latency-sensitive and data-intensive functions are best candidates for been placed in close proximity to the edge (e.g., co-located with 5G base stations), whereas computing-intensive functions may require more powerful resources from intermediary edge data centres.
 
-Figure~\ref{fig:Mobile_Computation_Offloading_F1} depicts the two AR functions as a single service (one request per offloading), whilst Figure~\ref{fig:Mobile_Computation_Offloading_F2} depicts each function as an independent service (two requests per offloading). 
+Figure~\ref{fig:Mobile_Computation_Offloading_F1} depicts the two AR functions as a single service (1x request per offloading), whilst Figure~\ref{fig:Mobile_Computation_Offloading_F2} depicts each function as an independent service (2x requests per offloading). 
 In the first approach, mobile devices (md) connected to SEP A are unable to offload computation, as the fEM function is currently unavailable at that platform and the network throughput among surrogate SEPs is insufficient for delegating requests with a video frame payload.
-In the second approach, data-intensive \textit{feature extraction} (fE) is performed by both SEPs. Conversely, \textit{feature matching} (fM) is unavailable at SEP A; fM requests targeting this platform are offloaded to SEP B or the Regional SEP by its \textit{Load Balancer},
+In the second approach, data-intensive \textit{feature extraction} (fE) is performed by both SEPs. Conversely, \textit{feature matching} (fM) is unavailable at SEP A; fM requests targeting this platform are offloaded to SEP B and to the Regional SEP by its \textit{Load Balancer},
 %or to the cloud by a load balancer, 
-thanks to the reduced payload size (frame features extracted by fE) and the low latency among these surrogate platforms. 
+thanks to the reduced payload size (frame features extracted by fE) and the low latency among these platforms. 
 
 
 
@@ -56,7 +56,7 @@ Similarly to individual functions, workflows are triggered by events; at each in
 
 \begin{figure}[tbp]
 	\centering
-	\includegraphics[width=\linewidth]{Figs/Mobile_Computation_Offloading_Caching.pdf}
+	\includegraphics[width=0.97\linewidth]{Figs/Mobile_Computation_Offloading_Caching.pdf}
 	\caption{A SEP with three instances of the \textit{feature extraction} (fE) and two instances of the \textit{feature matching} (fM) functions; a copy of the POI catalog (PC) used by fM instances is fetched once from a cloud storage service} 
 	\label{fig:Mobile_Computation_Offloading_Caching}
 \end{figure}
@@ -113,6 +113,13 @@ The accurate identification of such events, however, requires a complex analysis
 
 The aforementioned examples share one characteristic: their main purpose is to prevent large volumes of data to be sent and processed by distant data centres. In the latter example, providing feedback in a timely manner is important, but does not fall into the category of low ($\leq 100ms$) or ultra-low ($\leq 20ms$) latency requirements. For this kind of application, the offloading of data analysis from the cloud to the edge should be opportunistic and informed by the availability of computing and networking resources, as well as the characteristics and requirement of each function.
 
+\begin{figure}[tbp]
+	\centering
+	\includegraphics[width=\linewidth]{Figs/Edge_Data_Analytics_Personal_Assistant.pdf}
+	\caption{Nº of instances of the \textit{health analysis} function (fA) hosted by a Regional SEP is limited by a \textit{Centralized Orchestrator}; given the number of allocated instances, the latency requirements and the average response time, a \textit{Load Balancer} distributes requests among the SEP and the cloud-based FaaS.}
+	\label{fig:Edge_Data_Analytics_Personal_Assistant}
+\end{figure}
+
 
 As discussed in Section~\ref{sec:SEP_MCO}, the proposed architecture (see Figure~\ref{fig:Mobile_Computation_Offloading}) enables fine-grained functions to be placed onto different platforms. In addition to SEPs, delay-tolerant functions can be also deployed to cloud-based FaaS platforms. The resulting placement decision can be either orchestrated by a centralized entity~\cite{Taleb:2013}, coordinated among hierarchical edge and cloud platforms~\cite{Mach:2017}, and involve the participation of client devices~\cite{Baresi:2018}. The placement goal is to optimize the allocation of SEP resources, considering the \textit{utility} of each function (e.g. in mitigating network bottleneck and the workload of centralized services). Based on a given placement scheme, an informed \textit{Load Balancer} makes the timely decision on the destination of requests, taking into account the average response time of each function and its requirement for latency.% arriving at each SEP.
 %arriving at its own SEP.
@@ -131,15 +138,8 @@ Concluding this section, Figure~\ref{fig:Edge_Load_Placement} presents the distr
 
 \begin{figure}[tbp]
 	\centering
-	\includegraphics[width=\linewidth]{Figs/Edge_Data_Analytics_Personal_Assistant.pdf}
-	\caption{Nº of instances of the \textit{health analysis} function (fA) hosted by the SEP is limited to \textit{1} by a \textit{Centralized Orchestrator}; given the number of instances, the latency requirements and the average response time, a \textit{Load Balancer} distributes requests among the SEP and the cloud-based FaaS.}
-	\label{fig:Edge_Data_Analytics_Personal_Assistant}
-\end{figure}
-
-\begin{figure}[b]
-	\centering
 	\includegraphics[width=\linewidth]{Figs/Edge_Load_Placement}
-	\caption{Distribution of the workload for distinct functions among local SEPs, regional SEPs, and cloud-based FaaS platforms by\textit{load balancers}}
+	\caption{Distribution of the workload for distinct functions among local SEPs, regional SEPs, and cloud-based FaaS platforms by hierarchical \textit{load balancers}.}
 	\label{fig:Edge_Load_Placement}
 \end{figure}
 
