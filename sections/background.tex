@@ -19,8 +19,14 @@ and fully managed by a third party (also known as functions-as-a-service, or Faa
 
 In the FaaS model, application logic is implemented as functions, which may be written in various languages and exposed as web services. Functions are packed along with dependencies (e.g., modules, libraries, and other resources); runtime instances (e.g., NodeJS, Python) are made available on demand within milliseconds, thanks to the container technology. Functions can be executed just once, frequently, or concurrently. After completion, containerized runtime instances may remain idle (warm) for a short period of time before been reused or released.
 
-If compared to the conventional \textit{Infrastructure-a-as-Service} model (IaaS), the FaaS model ensures resources to be allocated when actually needed. FaaS platforms (e.g., AWS Lambda~\cite{AWSLambda}) also enforce limitations to the function package size and execution time by design. Due to its characteristics, this execution model enables an efficient usage of shared computational resources, which is particularly important to cope with the resource limitations of edge platforms and to allow edge-based solutions to scale~\cite{GarrigaMendonca2017}.
+If compared to the conventional \textit{Infrastructure-as-a-Service} model (IaaS), a serverless architecture implies the automated provisioning and management of resources needed by the application. In particular, the FaaS model ensures resources (i.e., containers) to be allocated when actually needed. Whilst the use of virtual machines (VMs) enables applications to share physical resources, a FaaS-based approach has the following advantages~\cite{GarrigaMendonca2017}:
 
+\begin{itemize}
+    \item a single operating system is shared among concurring instances from one or more applications; and
+    \item application instances are made available within milliseconds without preallocating resources.
+\end{itemize}
+
+FaaS platforms (e.g., AWS Lambda~\cite{AWSLambda}) also enforce limitations to the function package size and execution time by design. Due to its characteristics, this execution model enables an efficient usage of computational resources, which is particularly important to cope with the resource limitations of edge platforms and to allow edge-based solutions to scale.
 
 
 %The achieve efficiency is particularly important in the context of fine-grained edge nodes exhibiting limited computational and storage resources. 
