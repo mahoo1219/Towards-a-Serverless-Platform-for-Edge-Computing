@@ -197,7 +197,7 @@
 
 % *** ALIGNMENT PACKAGES ***
 %
-%\usepackage{array}
+\usepackage{array}
 % Frank Mittelbach's and David Carlisle's array.sty patches and improves
 % the standard LaTeX2e array and tabular environments to provide better
 % appearance and additional user controls. As the default LaTeX2e table
@@ -309,7 +309,7 @@
 
 
 % correct bad hyphenation here
-\hyphenation{op-tical net-works semi-conduc-tor}
+\hyphenation{op-tical net-works semi-conduc-tor ini-tia-li-za-tion}
 
 
 % Custom packages
@@ -384,15 +384,17 @@ Email: \{luciano.baresi,danilo.filgueira\}@polimi.it
 % As a general rule, do not put math, special symbols or citations
 % in the abstract
 \begin{abstract}
-The emergency of real-time and data-intensive applications, for which high latency and low throughput are prohibitive, challenges the success of the centralized data centre model. The new paradigm of edge computing aims to solve these problems; in contrast with cloud computing, edge nodes are geographically distributed in proximity with end-users, taking advantage of the emerging wireless communication technologies.
+The emergency of real-time and data-intensive applications, for which high latency and low throughput are prohibitive, challenges the success of the centralized data centre model. The paradigm of edge computing aims to solve these problems; in contrast with cloud computing, edge nodes are geographically distributed in proximity with end-users, taking advantage of the emerging wireless communication technologies.
 %and prompting an efficient management of limited resources at each node.
 Edge nodes exhibit limited resources, which prompts an efficient usage by edge-based applications and services.
-Addressing the needs of different applications scenarios and the intrinsic characteristics of edge computing, in this paper we propose a serverless platform for edge computing. 
-Firstly, we motivated the adoption of the \textit{Function-as-a-Service} model for the efficient provisioning of computing services. 
+Addressing the needs of different applications scenarios and the intrinsic characteristics of edge infrastructures, in this paper we propose a serverless platform for edge computing. 
+Firstly, we motivated the adoption of a serverless architecture and the \textit{Function-as-a-Service} model.
+%for the efficient provisioning of computing services.
 Secondly, we discussed the need for additional services and mechanisms composing the building blocks of an edge platform. %able to cope with different application scenarios. 
-Finally, we evaluated a platform prototype composed of state-of-art tools and optimizations. Results demonstrated the resource utilization footprint
+Finally, we evaluated a platform prototype composed of state-of-art tools and optimizations. Results demonstrated the %resource utilization footprint
 %of these tools 
-and the feasibility of the \textit{Serverless Edge Platform} in tackling different application scenarios in heterogeneous types of infrastructures.
+%and 
+the feasibility of the \textit{Serverless Edge Platform} in tackling different application scenarios in heterogeneous types of edge infrastructures.
 
 %The proposed architecture tackles two kind of scenarios: the offloading of compute-intensive tasks from mobile devices; and the in-transit analysis of data at the network edge. 
 
@@ -419,6 +421,7 @@ and the feasibility of the \textit{Serverless Edge Platform} in tackling differe
 \input{sections/sep.tex}
 \input{sections/prototype.tex}
 \input{sections/evaluation.tex}
+\input{sections/related_works.tex}
 \input{sections/conclusions.tex}
 
 
