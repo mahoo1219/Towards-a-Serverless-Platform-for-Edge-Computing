@@ -2,6 +2,7 @@
 
 \subsection{Latency-Sensitive Computation Offloading}\label{sec:SEP_MCO}
 
+
 %in contrast with full offloading approaches...
 
 The offloading of computation from mobile devices to cloud servers was firstly addressed by the concept of Mobile Cloud Computing~\cite{Khan:14}. Its main purpose was to enable rich mobile applications to be executed in resource-constrained mobile devices. However, this approach is limited by network latency, which is prohibitive for most real-time and interactive applications.
@@ -30,35 +31,42 @@ The latter advantage is particularly important, as different types of edge deplo
 %their limitation of 
 diverge in their computational capabilities. The separation of functions with different responsibilities 
 %and requirements 
-into independent services allows each function to be provided by distinct edge platforms; the decision of where to execute each function will depend on factors like their characteristics and requirements, the capabilities of distinct edge platforms, and the network latency and throughput among edge platforms and devices. 
+into independent services allows each function to be provided by distinct edge platforms; the decision of where to execute each function will depend on factors like their characteristics and requirements, the capabilities of edge platforms, and the network latency and throughput among edge platforms and devices. 
 
-In a N-tier fog topology~\cite{OpenFog:RA:2017}, latency-sensitive and data-intensive functions are best candidates for been placed in close proximity to the edge (e.g., SEPs co-located with 5G base stations~\cite{ETSI:MEC:2016:03}), whereas compute-intensive functions may require more powerful resources from intermediary fog nodes. 
+In a N-tier fog deployment~\cite{OpenFog:RA:2017}, latency-sensitive and data-intensive functions are best candidates for been placed in close proximity to the edge (e.g., SEPs co-located with 5G base stations~\cite{ETSI:MEC:2016:03}), whereas compute-intensive functions may require more powerful resources from intermediary fog nodes. Surrogate SEPs can also exploit \textit{east/west}~\cite{OpenFog:RA:2017} communication to maximize the availability of functions.
 
-\begin{figure}[tbp]
+\begin{figure}[bp]
 	\centering
 	\includegraphics[width=1\linewidth]{Figs/Mobile_Computation_Offloading_Workflow.pdf}
 	\caption{A workflow involving the sequential execution of the \textit{feature extraction} (fE) and \textit{matching} (fM) functions; each video frame generates a single (1x) request, which is sequentially processed by one instance of each function.} 
 	\label{fig:Mobile_Computation_Offloading_Workflow}
 \end{figure}
- 
-As an example, Figure~\ref{fig:Mobile_Computation_Offloading_F1} depicts the two AR tasks as a single function (1x request per offloading), whilst Figure~\ref{fig:Mobile_Computation_Offloading_F2} depicts each task as an independent function (2x requests per offloading). 
 
-In the first approach, mobile devices (md) connected to SEP$_A$ are unable to offload computation, as the fEM function is currently unavailable at that platform and the \textit{east to west}~\cite{OpenFog:RA:2017} throughput among these SEPs is insufficient for delegating frequent requests with a video frame as payload.
-
-In the second approach, data-intensive \textit{feature extraction} (fE) is performed by both SEPs. Conversely, \textit{feature matching} (fM) is unavailable at SEP$_A$; requests targeting the fM function at this platform are offloaded to either SEP$_B$ (east to west) or to the Regional SEP (south to north) by its \textit{FaaS Controller},
+%As an example, 
+Figure~\ref{fig:Mobile_Computation_Offloading_F1} depicts the two AR functions as a single service (1x request per offloading), whilst Figure~\ref{fig:Mobile_Computation_Offloading_F2} depicts each function as an independent service (2x requests per offloading). In the former, mobile devices (md) are unable to offload computation to SEP$_A$, as the fEM function is currently unavailable at that platform and the \textit{east/west} throughput is insufficient for delegating frequent requests with a video frame as payload. In the latter, data-intensive \textit{feature extraction} (fE) is provided by both SEPs, whilst \textit{feature matching} (fM) is unavailable at SEP$_A$. Requests targeting the fM function are delegated
+to either SEP$_B$ (\textit{east/north}) or 
+to the Regional SEP (\textit{south/north}),
+%by its \textit{FaaS Controller},
 %or to the cloud by a load balancer, 
-thanks to the reduced payload (\textit{video frame features}) and the low latency among these platforms. 
+thanks to the reduced payload size (\textit{video frame features}) and the low latency among these platforms. 
 
 %TODO: change this figure for a sequence diagram
-\begin{figure}[tbp]
+\begin{figure}[bp]
 	\centering
 	\includegraphics[width=0.97\linewidth]{Figs/Mobile_Computation_Offloading_Caching.pdf}
 	\caption{A SEP with three instances of the \textit{feature extraction} (fE) and two instances of the \textit{feature matching} (fM) functions; a copy of the POI catalog (PC) used by fM instances is fetched once from a cloud storage service} 
 	\label{fig:Mobile_Computation_Offloading_Caching}
 \end{figure}
 
-%First, the FaaS model is based on events; 
+In the aforementioned example, SEPs are pictured as heterogeneous, self-contained entities able to cooperate in the automated provisioning and allocation of resources needed to cope with distinct functions and varying workloads. For this, each SEP coordinates %(through its \textit{Controller}) 
+with surrogate SEPs and those at higher levels of hierarchy. While the specific details are out of the scope of this work, Section~\ref{sec:SEP_EDA} extends the discussion on the placement of functions and the balancing of the workload among SEPs.
 
+%Its materialization would elevate the concept of serverless computing to the geographical level.
+
+%Its materialization demands each SEP \textit{Controller}
+%More details on the placement of functions and balancing of the workload are disucussed in Section~\ref{sec:SEP_EDA}.
+
+%First, the FaaS model is based on events; 
 
 %\noindent
 \textbf{\textit{Optimizations:}} Notwithstanding the benefits of the FaaS model,
@@ -76,13 +84,13 @@ provides full-duplex communication channels over a single TCP connection. %Figur
 %Finally, a third function gets detailed information about each POI from a remote database.
 %In particular, OpenWhisk is an state-of-art and open source FaaS platform.
 
-The support of an efficient protocol by SEPs would enable real-time interactions between edge devices and the platform. Still, individual function invocations may add significant latency overhead whenever two or more functions form an execution flow. To avoid this overhead, developers would be forced to either chain function calls through hardcoded dependencies, or write coarser and less cohesive functions. In the former case, the chaining of function also imposes a cost overhead, since caller functions are kept waiting.% for other function(s) to return. 
+The support of an efficient protocol would enable real-time interactions between edge devices and the edge platform. Still, individual function invocations may add significant latency overhead whenever two or more functions form an execution flow. To avoid this overhead, developers would be forced to either chain function calls through hardcoded dependencies, or write coarser and less cohesive functions. In the former case, the chaining of function also imposes a cost overhead, since caller functions are kept waiting.% for other function(s) to return. 
 
 To address latency, design, cost, and resource efficiency concerns, we propose SEPs to be equipped with a \textit{Workflow Service}. This service allows developers to define, through visual or textual programming, an execution flow.
 %starting with the processing of the input sent by a client and finishing with the result sent back to the client. 
 Similarly to single functions, workflows are triggered by events (e.g., an external request); at each intermediary step, result from the current function is passed to the subsequent one. 
 
-Going back to the AR example, Figure~\ref{fig:Mobile_Computation_Offloading_Workflow} depicts a simple workflow consisting of the sequential execution of the \textit{feature extraction} and \textit{matching} functions, which remain decoupled. In contrast with Figure~\ref{fig:Mobile_Computation_Offloading_F2}, both functions are served by the same SEP. A similar multi-platform deployment could still be achieved with the offloading of requests coming from the \textit{Workflow Service} to surrogate SEPs.
+Going back to the AR example, Figure~\ref{fig:Mobile_Computation_Offloading_Workflow} depicts a simple workflow consisting of the sequential execution of the \textit{feature extraction} and \textit{matching} functions, which remain decoupled. In contrast with Figure~\ref{fig:Mobile_Computation_Offloading_F2}, both functions are served by the same SEP. A similar multi-platform deployment could still be achieved with the delegation of requests coming from the \textit{Workflow Service} to surrogate SEPs.
 
 Last but not least, existing FaaS platforms (e.g., AWS Lambda~\cite{AWSLambda} and Apache OpenWhisk~\cite{OpenWhisk}) enforce a programming model in which functions have access to a transient container folder without guaranteeing that subsequent invocations will be handled by the same CER. %Thus, each invocation must check whether cached data is available. 
 In the context of latency-sensitive applications, retrieving extensive data sets may add prohibitive overhead. For instance, in the AR example, a catalog (circa 1Gb) is used in the identification of points of interest (POI).
@@ -109,7 +117,7 @@ The diagram in Figure~\ref{fig:Mobile_Computation_Offloading_Caching} depicts th
 %A serverless edge platform should support a more efficient caching service to optimize use cases in which functions have data dependencies. 
 \subsection{Edge Data Analysis}\label{sec:SEP_EDA}
 
-\begin{figure}[tbp]
+\begin{figure}[bp]
 	\centering
 	\includegraphics[width=\linewidth]{Figs/Edge_Data_Analytics_Video_Surveillance.pdf}
 	\caption{Features from video frames captures by surveillance cameras are extracted (fE) and, upon a positive matching (fM$e$), sent for further analysis by a cloud service (fM$c$).}
@@ -129,7 +137,7 @@ depicted in Figure~\ref{fig:Edge_Data_Analytics_Video_Surveillance}. Similarly t
 %, this time with the purpose of recognizing faces from a police catalog. 
 These functions compose a workflow exposed as a service and consumed by resource-constrained IoT cameras; video frames are received at short intervals, from which facial features are extracted and matched against a police catalog (PC). A positive identification triggers the execution of a cloud-based service (fM\textit{c}) responsible for a more robust analysis able to detect false positives. In this manner, large volumes of data are processed at the edge, preventing the congestion of the wide area network (WAN) and centralized cloud services.
 
-\begin{figure}[tbp]
+\begin{figure}[bp]
 	\centering
 	\includegraphics[width=\linewidth]{Figs/Edge_Data_Analytics_Personal_Assistant.pdf}
 	\caption{Nº of instances of the \textit{health analysis} function (fA) hosted by a Regional SEP is limited by a \textit{Centralized Orchestrator}; given the number of allocated instances, the latency requirements and the average response time, a \textit{Load Balancer} distributes requests among the SEP and the cloud-based FaaS.}
@@ -193,7 +201,7 @@ fA proceeds with two actions upon an emergency: i) the invocation of an
 \textit{Emergency Service}; and ii) the notification of the \textit{Personal Assistant Device}. For this, the \textit{Load Balancer} works as a \textit{reverse proxy} to assure results will be sent back to the \textit{Personal Assistance Devices} regardless of the platform each request has been assigned to.
 
 
-\begin{figure}[tbp]
+\begin{figure}[bp]
 	\centering
 	\includegraphics[width=1\linewidth]{Figs/Edge_Coordination_AVs_wide.pdf}
 	\caption{Autonomous Vehicles, a road monitoring system, an emergency service and a logging service are coordinated by means of a distributed event bus hosted by surrogated SEPS}
@@ -235,7 +243,7 @@ Figure~\ref{fig:Edge_Coordination_AVs} illustrates the solution for AVs coordina
 
 \subsection{Stateful Edge Services}
 
-\begin{figure}[tbp]
+\begin{figure}[bp]
 	\centering
 	\includegraphics[width=\linewidth]{Figs/Stateful_Edge_Services.pdf}
 	\caption{A stateful service enables multiple players to join game battle sessions (BT$_1$, BT$_2$); instances (sBT$_1$, sBT$_2$) are mapped to each session; authentication (sAuth) and player scores (sSC) are managed by cloud-based services.}
@@ -287,13 +295,6 @@ Composing the rest of the application, other delay-tolerant features (e.g., play
 
 \subsection{On Premise Edge}
 
-\begin{figure}[tbp]
-	\centering
-	\includegraphics[width=1\linewidth]{Figs/Edge_Cloud_Continuum}
-	\caption{Different types of edge infrastructure forming a computing continuum; applications hosted by IoT and mobile devices switch between on premise and on demand SEPs hosting similar functions.}
-	\label{fig:Edge_Cloud_Continuum}
-\end{figure}
-
 Among the 
 %distinct application scenarios of 
 different flavors of the edge computing paradigm, one addresses the needs of real-time and/or data-intensive applications with on premise infrastructure deployments. Examples range from the Industry 4.0, also known as IoT 4.0, to
@@ -302,6 +303,13 @@ smart homes and offices~\cite{Porambage:2018}. For these scenarios, edge infrast
 
 %Differently from the outsourcing model popularized by cloud computing, 
 On premise resources are generally acquired and deployed to cope with the requirements from specific applications whose demand is known beforehand. Still, an efficient and automated management of these resources is needed to render solutions economic. As the technology evolves, the adoption of a serverless architecture empowered by the FaaS model becomes attractive for private deployments. This is even more true for the scenarios in which the demand for services is expected to change (e.g., following the daily changes of a digital factory production line). 
+
+\begin{figure}[tpb]
+	\centering
+	\includegraphics[width=1\linewidth]{Figs/Edge_Cloud_Continuum}
+	\caption{Different types of edge infrastructure forming a computing continuum; applications hosted by IoT and mobile devices switch between on premise and on demand SEPs hosting similar functions.}
+	\label{fig:Edge_Cloud_Continuum}
+\end{figure}
 
 On premise and on demand SEPs may also form a computing continuum that allows mobile applications empowered with self-managing capabilities~\cite{OrsiniBL16,Baresi:2018} to make use of the best available resources at each context. The characteristics of the FaaS model --- stateless and granular functions independently deployed --- facilitates the realization of such a continuum by allowing the seamless change from on premise SEPs, accessible through WLAN, to on demand SEPs accessible through radio access networks (RAN). Figure~\ref{fig:Edge_Cloud_Continuum} illustrates the aforementioned scenario. 
 

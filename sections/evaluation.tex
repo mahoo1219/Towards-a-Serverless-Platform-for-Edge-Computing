@@ -1,13 +1,21 @@
 \section{Evaluation}\label{sec:evaluation}
 
+With the purpose of demonstrating the feasibility of the \textit{Serverless Edge Platform}, we conducted an experimental evaluation of its prototype. The evaluation main goal was to assess both the performance of different platform services in terms of latency and throughput, as well as its scalability with a limited amount of computational resources available. 
 
+\subsection{Experimental Setup}
 
-Table~\ref{tab:OPENWHISK_MEM_FOOTPRINT} lists the memory footprint of OpenWhisk components while no functions are been invoked. In total, memory footprint in idle state summed  2.1GB. In addition to these, each CER consumes up to 256MB in its default configuration.
+The experiments were performed in a Linux VM with 8GB of RAM and two virtual CPU cores from a cloud provider (AWS). Each SEP component was deployed as a Docker container; apart from the MQTT broker (Mosquitto), remaining components are part of the native OpenWhisk stack.  
+
+\subsection{Memory Usage Footprint}
+
+As one of the most valuable type of resource, we measured the memory consumption from all tools composing the platform prototype. More precisely, the values reported in Table~\ref{tab:OPENWHISK_MEM_FOOTPRINT} correspond to the memory footprint of each component while the platform is idle, i.e., while no functions are been invoked.
+
+In total, memory footprint in idle state summed  2.1GB. Additionally, each CER consumes up to 256MB in its default configuration (up to 512MB per CER is supported). 
 
 
 \begin{table}[tbp]
 % increase table row spacing, adjust to taste
-%\renewcommand{\arraystretch}{1.3}
+\renewcommand{\arraystretch}{1.3}
  %if using array.sty, it might be a good idea to tweak the value of
  %\extrarowheight as needed to properly center the text within the cells
 \caption{Memory footprint of OpenWhisk components (idle state)}
@@ -33,5 +41,25 @@ Minio               & 15.7~MB\\
 \hline
 Zookeeper           & 81.56~MB\\
 \hline
+\textbf{Total}      & \textbf{2.1~GB}\\
+\hline
 \end{tabular}
 \end{table}
+
+Considering the variety of deployment scenarios that includes heterogeneous fog nodes, the results indicate the feasibility of the SEP prototype in the materialization of a SEP hosted by nodes matching the resources of a personal computer. 
+
+Interestingly, \textit{Kafka} --- and accompanying \textit{Zookeeper} --- has been proven the most expensive component; while the role of a reliable messaging system is paramount for larger scale and distributed deployments, resource-constrained SEPs would benefit from the combination of the \textit{Controller} and the \textit{Invoker} into a monolithic component.
+%TODO: extend the discussion in terms of distributed deployments?
+
+\subsection{Latency, Throughput, and Scalability}
+
+Once the memory baseline for the full stack prototype has been delimited, a set of experiments was designed to stress the platform in terms of latency, throughput and scalability.
+
+Latency overhead was measured by triggering, at regular intervals, 100 sequential requests to a simple Python function directly from the controller (bypassing the \textit{API Gateway}). Figure~\ref{} presents the obtained results; each point in the curve corresponds to the \textit{average response time} for a given \textit{interval between requests}.
+
+The obtained results...
+
+In contrast with the previous experiment, the average throughput was measured with an increasing number of concurrent requests to the same function. Figure~\ref{} presents the obtained results; each point in the curve corresponds to the average \textit{response throughput} for a given \textit{request throughput}.
+
+The obtained results...
+

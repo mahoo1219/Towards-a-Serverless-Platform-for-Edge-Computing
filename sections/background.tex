@@ -1,17 +1,17 @@
 \section{Background: Serverless Computing}\label{sec:background}
 
-%To address the characteristics of edge computing nodes, an edge platform must manage its resources very efficiently, which means provisioning and allocating resources only when they are needed. 
-
 %data size as a criteria for the offloading decision
-\begin{figure*}[tbp]
+\begin{figure*}[bp]
 	\centering
-	\captionsetup[subfigure]{width=0.48\linewidth}
-	\subfloat[Both \textit{feature extraction} and \textit{matching} compose a single service (fEM); mobile devices (md) are unable to offload computation to SEP A, whose resources have been allocated to other functions; computation is offloaded to SEP B with one (1x) \textit{HTTP request} per video frame.\label{fig:Mobile_Computation_Offloading_F1}] {\includegraphics[width=0.48\textwidth]{Figs/Mobile_Computation_Offloading_F1.pdf}}
+	\captionsetup[subfigure]{width=0.496\linewidth}
+	\subfloat[Both \textit{feature extraction} and \textit{matching} compose a single service (fEM); mobile devices (md) are unable to offload fEM to SEP A, whose resources have been allocated to other functions; computation is offloaded to SEP B with one (1x) \textit{HTTP request} per video frame.\label{fig:Mobile_Computation_Offloading_F1}] {\includegraphics[width=0.496\textwidth]{Figs/Mobile_Computation_Offloading_F1.pdf}}
 	~
-	\captionsetup[subfigure]{width=0.51\linewidth}
-	\subfloat[Data-intensive \textit{feature extraction} (fE) is performed by SEPs A and B; whereas \textit{feature matching} (fM) is offloaded from SEP A to B or to a Regional SEP by the \textit{FaaS Controller}. In total, computation is offloaded with two (2x) \textit{HTTP requests} per video frame (SEP B), plus one (1x) inter-platform fM request (SEP A).\label{fig:Mobile_Computation_Offloading_F2}] {\includegraphics[width=0.51\textwidth]{Figs/Mobile_Computation_Offloading_F2.pdf}}
-	\caption{\textit{Feature extraction} and \textit{matching} functions from the AR example forming a single (a), and two fine-grained services (b)} \label{fig:Mobile_Computation_Offloading}
+	\captionsetup[subfigure]{width=0.504\linewidth}
+	\subfloat[Data-intensive \textit{feature extraction} (fE) is provided by SEP$_A$ and SEP$_B$, while \textit{feature matching} (fM) is provided by SEP$_B$ and a Regional SEP (SEP$_R$). In total, computation is offloaded with two (2x) \textit{HTTP requests} per video frame, plus one (1x) inter-platform request (SEP$_A \rightarrow $SEP$_{B|R}$ and SEP$_B \rightarrow $SEP$_{R}$).\label{fig:Mobile_Computation_Offloading_F2}] {\includegraphics[width=0.504\textwidth]{Figs/Mobile_Computation_Offloading_F2.pdf}}
+	\caption{\textit{Feature extraction} and \textit{matching} functions from the AR example forming a single function (a) and two fine-grained functions (b)} \label{fig:Mobile_Computation_Offloading}
 \end{figure*}
+
+%To address the characteristics of edge computing nodes, an edge platform must manage its resources very efficiently, which means provisioning and allocating resources only when they are needed. 
 
 Serverless computing~\cite{Lloyd18serverless,Roberts:2018} is mainly associated with two concepts: of applications that rely on third-party cloud services for handling business logic and state (also known as \textit{Background-as-a-Service}); and that of applications for which server-side logic is still written by application developers, but, unlike traditional architectures, runs in stateless compute containers that are event-triggered
 %, ephemeral (may only last for one invocation), 
@@ -30,8 +30,8 @@ If compared to the conventional \textit{Infrastructure-as-a-Service} model (IaaS
 the FaaS model ensures resources (i.e., containers) to be allocated when actually needed. Whilst the use of virtual machines (VMs) enables applications to share physical resources, the FaaS model exploits the container technology to deliver the following advantages~\cite{GarrigaMendonca2017}:
 
 \begin{itemize}
-    \item a single operating system is shared among concurring function instances from one or more applications; and
-    \item functions are deployed and scaled in reaction to events without preallocating computational resources.
+    \item a single operating system is shared among concurring CER instances from one or more functions; and
+    \item functions are promptly deployed and scaled in reaction to events without preallocating computational resources.
 \end{itemize}
 
 FaaS-based platforms (e.g., AWS Lambda~\cite{AWSLambda}) also enforce limitations to the function package size and execution time by design. Due to its characteristics, this execution model enables an efficient usage of computational resources, which is particularly important to cope with the resource limitations of edge platforms and to allow edge-based solutions to scale.
