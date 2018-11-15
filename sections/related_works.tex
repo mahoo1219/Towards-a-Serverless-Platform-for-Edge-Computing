@@ -11,10 +11,9 @@ providers is an interesting problem, in the present work we have focused on the 
 %TODO
 Several works addressed the placement and migration of services in (mobile) edge clouds~\cite{Wang:2015a,Plachy:2016,Machen:2018}. The fundamental different concerning these works and the proposed architecture lies in the execution model: in contrast with \textit{always on} IaaS-based services, %(e.g., a VM-based web application), 
 %functions are stateless, allocated on demand, and limited on their execution time. 
-function migration is addressed with the creation of ephemeral CER instances by distinct SEPs, accordingly to the mobility of clients. Notwithstanding this, existing solutions are of particular interest for the  
-placement problem discussed in Section~\ref{sec:SEP_EDA}.
+function migration is addressed with the creation of ephemeral CER instances by distinct SEPs, accordingly to the mobility of clients. Notwithstanding this, existing solutions are of particular interest for the placement problem discussed in Section~\ref{sec:SEP_EDA}.
 
-
+More recently, a model for the management of FaaS composing a computing continuum of mobile, edge, and cloud resources was proposed by Baresi et al.~\cite{Baresi:2018}. Among others, the paper tackles the opportunistic allocation of functions onto mobile, edge, and cloud platforms based on the perceived latency and battery consumption. The resulting placement decision involves the participation of client devices. In contrast, the present work exploits the inter-platform cooperation within a single fog/cloud provider to render the placement of functions transparent to end-users. It also includes application scenarios others than mobile computation offloading. 
 
 %Other works adopted the FaaS model in the definition of specific mechanisms governing the scheduling~\cite{Aske:2018} and life-cycle management~\cite{Baresi:2018} of edge-based functions. 
 

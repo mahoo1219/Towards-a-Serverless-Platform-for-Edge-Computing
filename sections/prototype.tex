@@ -35,17 +35,12 @@ Among others, it comprises the following components~\cite{OpenWhisk}:
     
 \end{itemize}
 
-\begin{figure}[tbp]
-	\centering
-	\includegraphics[width=1\linewidth]{Figs/Serverless_Edge_Platform_Prototype.pdf}
-	\caption{Overview of the SEP prototype comprising all tools and services}
-	\label{fig:Serverless_Edge_Platform_Overview}
-\end{figure}
-
 \subsection{Latency-Sensitive Computation Offloading}
 
 %TODO ETSI comparison
-To cope with the requirements of latency-sensitive computation offloading, SEP components are deployed to fog nodes in close proximity with end-users (e.g., cloudlets and cellular infrastructure). In this configuration, client devices interface with  OpenWhisk's \textit{Controller} through its \textit{Reverse Proxy} (Nginx).
+%TODO define MEC
+To cope with the requirements of latency-sensitive computation offloading, SEP components are deployed to fog nodes in close proximity with end-users
+(e.g., cloudlets or MEC nodes). In this configuration, client devices interface with  OpenWhisk's \textit{Controller} through its \textit{Reverse Proxy} (Nginx).
 
 %the critical path that starts with the client request and finishes with the response notification must remain near the edge. 
 
@@ -53,28 +48,24 @@ To cope with the requirements of latency-sensitive computation offloading, SEP c
 Depending on the installed capabilities, OpenWhisk's \textit{Invoker} can be deployed to one or multiple VMs. Each \textit{Invoker} takes care of a pool of containers whose maximum size depends on the available resources. The load is distributed among \textit{invokers} by OpenWhisk's \textit{Load Balancer}.
 %, who monitors the health status of each \textit{Invoker}.
 
-OpenWhisk's \textit{Invoker} is purely event-driven. Upon a function invocation, the \textit{Invoker} checks for the availability of a warm (idle) CER before creating a new one. To mitigate cold start of latency-sensitive functions, the \textit{idleness time} has been increased from \textit{50 milliseconds} to \textit{5 seconds}. More robust extensions targetting a more efficient resource allocation should consider a dynamic and autonomous optimization of this parameter.
+%OpenWhisk's \textit{Invoker} is purely event-driven. 
+Upon a function invocation, the \textit{Invoker} checks for the availability of a warm (idle) CER before creating a new one. To mitigate cold start of latency-sensitive functions, the \textit{idleness time} has been increased from \textit{50~ms} to \textit{0.5~s}. More robust extensions targeting a more efficient resource allocation should consider a dynamic optimization of this parameter.
 
-OpenWhisk does not provide native support for the \textit{WebSocket} protocol. Coherently with what has been discussed in Section~\ref{sec:SEP_MCO}, we have extended OpenWhisk to enable a more efficient communication between SEPs and edge devices hosting real-time and interactive applications. The proposed extension consists of the following modifications: 
-
-\begin{itemize}
-    
-    \item a new endpoint entry supporting the \textit{WebSocket} protocol in \textit{Nginx}'s configuration; and
-    
-    \item the additional implementation handling \textit{WebSocket} messages in the \textit{Controller} component.
-    
-\end{itemize}
-
+OpenWhisk does not provide native support for the \textit{WebSocket} protocol. Coherently with what has been discussed in Section~\ref{sec:SEP_MCO}, we have extended OpenWhisk to enable a more efficient communication between SEPs and edge devices hosting real-time and interactive applications. 
+%The proposed extension consists of the following modifications: 
+%\begin{itemize}
+%    \item a new endpoint entry supporting the \textit{WebSocket} protocol in \textit{Nginx}'s configuration; and
+%    \item the additional implementation handling \textit{WebSocket} messages in the \textit{Controller} component.
+%\end{itemize}
 %upon the activation of actions --- a stateless function written in one of the many languages supported by the tool.
 %OpenWhisk is implemented as an event-driven platform. 
-
-OpenWhisk natively supports action sequences, which allow the creation and triggering of sequential execution flows using the platform's API. Our prototype exploits this feature for the definition of the \textit{Workflow Service} discussed in Section~\ref{sec:SEP_MCO}. Future extensions may consider the support of more comprehensive flow-based languages. %(e.g., from visual programming tools such as \textit{NodeRED}).
+In turn, OpenWhisk natively supports action sequences, which allow the creation and triggering of sequential execution flows using the platform's API. Our prototype exploits this feature for the definition of the \textit{Workflow Service} discussed in Section~\ref{sec:SEP_MCO}. Future extensions may consider the support of more comprehensive flow-based languages. %(e.g., from visual programming tools such as \textit{NodeRED}).
 
 
 %\subsection{Caching Service}
 
 Finally, for the materialization of the \textit{Caching Service} discussed in Section~\ref{sec:SEP_MCO}, we adopted \textit{Minio}, an open source and lightweight object storage tool already part of OpenWhisk stack.
-Minio is compatible with \textit{AWS S3} --- a state-of-art object storage service --- and features native integration with different types of notification systems. Moreover, it features an API for managing objects. These characteristics are particularly important in the context of a SEP platform, as object events (e.g., creation, update) can trigger the execution of functions, whereas functions have access to objects through API calls. 
+Minio is compatible with \textit{AWS S3} --- a state-of-art object storage service --- and features native integration with different types of notification systems and an API for managing objects. These characteristics are particularly important in the context of a SEP platform, as object events (e.g., creation, update) can trigger the execution of SEP functions, whereas functions have access to cached objects through API calls. 
 
 %an event-driven serverless architecture
 
@@ -85,7 +76,7 @@ Minio is compatible with \textit{AWS S3} --- a state-of-art object storage servi
 
 \subsection{Opportunistic Edge Data Analysis}
 
-OpenWhisk lacks support for the dynamic placement of functions based on latency requirements and other criteria. Nonetheless, it features a \textit{Load Balancer} that decides, among distributed \textit{invokers}, where to send requests. 
+OpenWhisk lacks support for the dynamic placement of functions based on latency requirements and other criteria. Nonetheless, it features a \textit{Load Balancer} that decides, among distributed \textit{Invokers}, where to send requests. 
 %Each pool is interfaced and managed by an \textit{Invoker} component. 
 The \textit{Load Balancer} communicates with OpenWhisk's \textit{Invoker} through messages buffered and persisted by \textit{Apache Kafka}, a high-throughput, distributed, publish-subscribe messaging system.
 %(see Figure~\ref{fig:Serverless_Edge_Platform_Overview}). 
@@ -100,15 +91,26 @@ To evaluate the feasibility of the opportunistic placement discussed in Section~
     \item the prioritization by the \textit{Load Balancer} of the local \textit{Invoker} whenever the response time is below a threshold. %the CPU or memory load at the SEP is below 90\%. 
 \end{itemize}
 
-The opportunistic placement prototype also required modifications from the \textit{Invoker} side. More precisely, function activation now takes as parameter the \textit{maximum number of CER instances} each function can have --- as decided by an \textit{Orchestrator}. If this limited is achieved, the function activation fails and the original request is put back into the \textit{Load Balancer} queue. As the response time increases above the threshold, requests are diverged by the \textit{Load Balancer} to the cloud platform. 
+The opportunistic placement prototype also required modifications from the \textit{Invoker} side. More precisely, function activation now takes as parameter the \textit{maximum number of CER instances} each function can have --- as decided by an \textit{Orchestrator}. If this limited is achieved, the function activation fails and the original request is put back into the \textit{Load Balancer} queue. As the response time increases above the threshold, requests are diverged 
+%by the \textit{Load Balancer} 
+to the cloud-based \textit{Invoker}. 
 
-Finally, an \textit{Orchestrator} was implemented as a separated module in Python language. Its simple role is to monitor the arrival rate of different functions and inform the SEP for the share of resources each function may allocate.
+Finally, an \textit{Orchestrator} was implemented as a separated module in Python language. Its simple role is to monitor the arrival rate of different functions and inform the SEP for the share of resources each function may allocate. 
+
+Figure~\ref{fig:Serverless_Edge_Platform_Overview} presents the resulting architecture with the \textit{Load Balancer} part of the \textit{Controller}. As discussed in Section~\ref{sec:SEP_EDA}, this configuration is suitable for SEPs in close proximity with end-users, whereas regional SEPs outside the main network path towards the cloud should rely on external load balancers. 
+
 
 
 %Figure~\ref{fig:SEP_Low_Latency_FaaS} presents the resulting platform architecture.
 
-%TODO
-Figure~\ref{fig:SEP_Placement} presents the resulting architecture with the \textit{Load Balancer} part of the \textit{Controller}. While this configuration is suitable to SEPs in close proximity with end-users (e.g., co-located with WLAN or RAN infrastructures), it may add substantial latency if the SEP lies many network hops away from the natural path to the cloud alternative. In this case, external \textit{load balancers} should anticipate request distribution among local, regional, and cloud-based SEPs (see Figure~\ref{fig:Edge_Load_Placement}).
+\begin{figure}[tbp]
+	\centering
+	\includegraphics[width=1\linewidth]{Figs/Serverless_Edge_Platform_Prototype.pdf}
+	\caption{Overview of the SEP prototype comprising all tools and services}
+	\label{fig:Serverless_Edge_Platform_Overview}
+\end{figure}
+
+
 
 %or become a bottleneck in intermediary deployments (e.g., regional SEPs covering larger areas). 
 
@@ -119,7 +121,8 @@ Figure~\ref{fig:SEP_Placement} presents the resulting architecture with the \tex
 
 \subsection{Stateful Services}
 
-To address the need of stateful services, we have enabled stateful application partitions to run in a similar environment from stateless functions by extending OpenWhisk's \textit{Invoker}. In contrast with stateless functions --- which can be executed by any available or new CER with the corresponding runtime --- stateful services are identified by a token mapped to one specific CER upon initialization (\textit{session start event}). 
+%To address the need of stateful services, 
+We have enabled stateful application partitions to run in a similar environment from stateless functions by extending OpenWhisk's \textit{Invoker}. In contrast with stateless functions --- which can be executed by any available or new CER with the corresponding runtime --- stateful services are identified by a token mapped to one specific CER upon initialization (\textit{session start event}). 
 
 Every invocation to the stateful service is delegated to the corresponding CER by means of an \textit{update command}. This additional command specifies the service function to be performed along with any parameters from the original request. The resulting mechanism enables state to be consistently evolved at each invocation from one or distinct clients within the same session until CER termination (\textit{session end event}).
 
@@ -134,9 +137,11 @@ Among its features, its \textit{broker} enables \textit{topic bridging} and \tex
 
 \subsection{Nginx}\label{sec:prototype_Nginx}
 
-Last but not least, SEPs should interface with the external world by means of a reverse proxy. Its role is to map external requests (e.g., HTTP, WebSocket) to internal services (e.g., FaaS, publish-subscribe system, etc). 
+Last but not least, SEPs should interface with the external world by means of a gateway. Its role is to map external invocations (e.g., HTTP, WebSocket) to the platform services. %(e.g., FaaS, publish-subscribe system, etc). 
 
-Nginx is a state-of-art tool open source tool featuring, among others, a reverse proxy. Similarly to Apache, it allows the specification of endpoints that are mapped to internal applications. Due to its maturity and popularity, we adopted Nginx as the reverse proxy in our SEP prototype. This tool is also naively integrated with OpenWhisk.
+Nginx is a state-of-art tool open source tool featuring, among others, a reverse proxy. This tool is also natively integrated with OpenWhisk. 
+%It allows the specification of endpoints that are mapped to internal applications. 
+Due to its maturity and popularity, we adopted Nginx in our SEP prototype.
 
 %\subsection{SEP Product Line}
 

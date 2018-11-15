@@ -4,13 +4,13 @@ With the purpose of demonstrating the feasibility of the \textit{Serverless Edge
 
 \subsection{Experimental Setup}
 
-The experiments were performed in a Linux VM with 8GB of RAM and two virtual CPU cores from a cloud provider (AWS). Each SEP component was deployed as a Docker container; apart from the MQTT broker (Mosquitto), remaining components are part of the native OpenWhisk stack.  
+The experiments were performed in a Linux VM with 8GB of RAM and two virtual CPU cores from a cloud provider. Each SEP component was deployed as a Docker container; apart from the MQTT broker (Mosquitto), remaining components are part of the native OpenWhisk technology stack.
 
 \subsection{Memory Usage Footprint}
 
 As one of the most valuable type of resource, we measured the memory consumption from all tools composing the platform prototype. More precisely, the values reported in Table~\ref{tab:OPENWHISK_MEM_FOOTPRINT} correspond to the memory footprint of each component while the platform is idle, i.e., while no functions are been invoked.
 
-In total, memory footprint in idle state summed  2.1GB. Additionally, each CER consumes up to 256MB in its default configuration (up to 512MB per CER is supported). 
+In total, memory footprint in idle state summed  2.1GB. Additionally, each CER consumes up to 256MB in its default configuration (up to 512MB per CER is supported). Considering the variety of deployment scenarios that includes heterogeneous fog nodes, the results indicate the feasibility of the SEP prototype in the materialization of a SEP hosted by nodes matching the resources of a personal computer. 
 
 
 \begin{table}[tbp]
@@ -46,20 +46,146 @@ Zookeeper           & 81.56~MB\\
 \end{tabular}
 \end{table}
 
-Considering the variety of deployment scenarios that includes heterogeneous fog nodes, the results indicate the feasibility of the SEP prototype in the materialization of a SEP hosted by nodes matching the resources of a personal computer. 
 
-Interestingly, \textit{Kafka} --- and accompanying \textit{Zookeeper} --- has been proven the most expensive component; while the role of a reliable messaging system is paramount for larger scale and distributed deployments, resource-constrained SEPs would benefit from the combination of the \textit{Controller} and the \textit{Invoker} into a monolithic component.
+Interestingly, \textit{Kafka} --- and accompanying \textit{Zookeeper} --- has been proven the most expensive component. While the role of a reliable messaging system is paramount for larger scale and distributed deployments, resource-constrained SEPs would benefit from the combination of the \textit{Controller} and the \textit{Invoker} into a monolithic component.
 %TODO: extend the discussion in terms of distributed deployments?
 
 \subsection{Latency, Throughput, and Scalability}
 
-Once the memory baseline for the full stack prototype has been delimited, a set of experiments was designed to stress the platform in terms of latency, throughput and scalability.
+Once the memory baseline for the full stack prototype has been delimited, a set of experiments was designed to stress the platform performance in terms of latency, throughput, and the resulting scalability.
 
-Latency overhead was measured by triggering, at regular intervals, 100 sequential requests to a simple Python function directly from the controller (bypassing the \textit{API Gateway}). Figure~\ref{} presents the obtained results; each point in the curve corresponds to the \textit{average response time} for a given \textit{interval between requests}.
+Latency overhead was measured by triggering, at regular intervals, $100$ sequential requests to a simple \textit{Python} function directly from the controller (bypassing the \textit{API Gateway}). In turn, the average throughput was measured with an increasing number of concurrent requests to the same function. In both cases, the idleness time before pausing the container (intermediary CER state before termination) was set to $500ms$.
 
-The obtained results...
+Figure~\ref{fig:RESULTS_LATENCY} presents the obtained results for latency; each bar corresponds to the \textit{latency overhead} for a given \textit{interval between invocations}(TBI). In particular, the blue bars show the results for the native FaaS configuration with up to 4 concurrent CERs spawned; in contrast, red bars show the results for the stateful service extension in which all invocations are handled by the same CER.
 
-In contrast with the previous experiment, the average throughput was measured with an increasing number of concurrent requests to the same function. Figure~\ref{} presents the obtained results; each point in the curve corresponds to the average \textit{response throughput} for a given \textit{request throughput}.
+\begin{figure}[bth]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=\linewidth,
+    height=5cm,
+    ybar,
+    bar width=10pt,
+    ymin=0,
+    ymax=280,
+    enlarge x limits=0.15,
+    legend style={
+        at={(0.5,-0.25)},
+        anchor=north,
+        legend columns=-1
+    },
+    ylabel={Latency Overhead (ms)},
+    xlabel={Interval Between Invocations (ms)},
+    symbolic x coords={31,62,125,250,500},
+    %xticklabels={31,62,125,250,500},
+    xtick=data,
+    grid=major,
+    %nodes near coords,
+    %nodes near coords align={vertical},
+]
+%\addplot+[smooth] table[x=tbi, y=mean] {results/latency.dat};
+\addplot+[
+    %only marks,
+    %very thick,
+    fill={rgb:red,1;green,2;blue,5;white,5},
+    draw=black,
+    point meta=y,
+    every node near coord/.style={inner ysep=5pt},
+    error bars/.cd,
+        y dir=both,
+        y explicit
+]
+table[x=tbi, y=mean, y error=error] {results/latency_4.dat};
+%\addlegendentry{Function-as-a-Service}
+\addplot[
+    %only marks,
+    %very thick,
+    fill=red!40,
+    draw=black,
+    point meta=y,
+    every node near coord/.style={inner ysep=5pt},
+    error bars/.cd,
+        y dir=both,
+        y explicit
+]
+table[x=tbi, y=mean, y error=error] {results/latency_1.dat};
+%\addlegendentry{Stateful Service}
+%\legend{used,understood,not understood}
+\end{axis}
+\end{tikzpicture}
+\caption{Latency overhead for the FaaS (left) and the stateful service (right)}
+\label{fig:RESULTS_LATENCY}
+\end{figure}
 
-The obtained results...
+In the worse case ($31ms$ between invocations), latency overhead was of $94\pm14ms$ for the FaaS and $137\pm32ms$ for the \textit{Stateful Service}. For both services, average latency falls close to $100ms$. In all cases, the FaaS outperforms the \textit{Stateful Service}, thanks to CERs parallelization.
 
+Interestingly, as the TBI approaches the idleness time limit ($500ms$), a higher latency is noticed. This increase can be explained by the overhead for pausing/resuming containers. This is particularly significant for the \textit{Stateful Service}, as the single CER needs to be resumed before processing the subsequent invocation. 
+
+\begin{figure}[tbh]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width= 1\linewidth,
+    height=6cm,
+    ybar stacked,
+    bar width=10pt,
+    ymin=0,
+    ymax=700,
+    enlarge x limits=0.15,
+    legend style={
+        at={(0.5,-0.25)},
+        anchor=north,
+        legend columns=-1
+    },
+    %scale only axis,
+    ylabel={Throughput~(res/s)~\textbar~Latency~(ms)},
+    xlabel={Simultaneous clients},
+    symbolic x coords={10,20,30,40,50,60,70,80,90,100},
+    %xticklabels={31,62,125,250,500},
+    xtick=data,
+    grid=major,
+    %nodes near coords,
+    %nodes near coords align={vertical},
+]
+%\addplot+[smooth] table[x=tbi, y=mean] {results/latency.dat};
+\addplot+[
+    %only marks,
+    %very thick,
+    fill={rgb:red,0;green,3;blue,3;white,4},
+    draw=black,
+    point meta=y,
+    every node near coord/.style={inner ysep=5pt},
+    error bars/.cd,
+        y dir=both,
+        y explicit
+]
+table[x=conn, y=thr]{results/throughput_x16.dat};
+%\addlegendentry{Function-as-a-Service}
+\addplot+[
+    %only marks,
+    %very thick,
+    fill={rgb:red,2;white,4},
+    draw=black,
+    point meta=y,
+    every node near coord/.style={inner ysep=5pt},
+    error bars/.cd,
+        y dir=both,
+        y explicit
+]
+table[x=conn, y=mean, y error=error] {results/throughput_x16.dat};
+%\addlegendentry{Function-as-a-Service}
+\end{axis}
+\end{tikzpicture}
+\caption{Latency~(ms) and throughput~(res/s) for an increasing number of simultaneous clients}
+\label{fig:RESULTS_THROUGHPUT}
+\end{figure}
+
+Figure~\ref{fig:RESULTS_THROUGHPUT} presents the obtained results for throughput; each point in the curve corresponds to the \textit{response throughput} and \textit{average latency} for a given \textit{request throughput}. 
+%
+The obtained results demonstrate the feasibility of a constrained SEP deployment in serving as high as $175$ invocations per second. Given the VM limitations (8GB, 2 virtual CPU cores), the achieved throughput is significant. This is particularly true if we consider that such a limited fog node should address the needs of a reduced number of simultaneous users. Results also indicate the importance of dedicating resources to latency-sensitive applications as the increase in request throughput (lower bar) causes the increase of the perceived latency per request (upper bar). 
+
+%Moreover, as the optimal number of concurring CERs summed 1GB only, results could be much improved by increasing the number of CPU cores available. 
+
+%\subsubsection{Threats To Validity}
+
+%In our experiments, we did not evaluate the mechanisms for inter-platform cooperation nor the centralized or hierarchical orchestration of SEP resources. 
