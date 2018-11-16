@@ -28,7 +28,7 @@ Among others, it comprises the following components~\cite{OpenWhisk}:
     
     \item \textit{Controller}: responsible for validating, authenticating, and distributing (load balancing) requests to \textit{Invokers}; and 
     
-    \item \textit{Invoker}: responsible for the management of a pool of CERs, including their creation upon function activation and termination upon idleness;
+    \item \textit{Invoker}: responsible for the management of a pool of CERs, including their creation upon function invocation and termination upon a period of idleness;
     
     
     %selecting or creating a CER for the execution of a function activation.
@@ -49,7 +49,7 @@ Depending on the installed capabilities, OpenWhisk's \textit{Invoker} can be dep
 %, who monitors the health status of each \textit{Invoker}.
 
 %OpenWhisk's \textit{Invoker} is purely event-driven. 
-Upon a function invocation, the \textit{Invoker} checks for the availability of a warm (idle) CER before creating a new one. To mitigate cold start of latency-sensitive functions, the \textit{idleness time} has been increased from \textit{50~ms} to \textit{0.5~s}. More robust extensions targeting a more efficient resource allocation should consider a dynamic optimization of this parameter.
+Upon a function invocation, the \textit{Invoker} checks for the availability of a warm (idle) CER before creating a new one. To mitigate cold start of latency-sensitive functions, the \textit{idleness time} has been increased from \textit{50~ms} to \textit{500~ms}. More robust extensions targeting a more efficient resource allocation should consider a dynamic optimization of this parameter.
 
 OpenWhisk does not provide native support for the \textit{WebSocket} protocol. Coherently with what has been discussed in Section~\ref{sec:SEP_MCO}, we have extended OpenWhisk to enable a more efficient communication between SEPs and edge devices hosting real-time and interactive applications. 
 %The proposed extension consists of the following modifications: 
@@ -106,7 +106,7 @@ Figure~\ref{fig:Serverless_Edge_Platform_Overview} presents the resulting archit
 \begin{figure}[tbp]
 	\centering
 	\includegraphics[width=1\linewidth]{Figs/Serverless_Edge_Platform_Prototype.pdf}
-	\caption{Overview of the SEP prototype comprising all tools and services}
+	\caption{Overview of the SEP prototype architecture}
 	\label{fig:Serverless_Edge_Platform_Overview}
 \end{figure}
 
@@ -133,7 +133,9 @@ Every invocation to the stateful service is delegated to the corresponding CER b
 %Among the stack of technology composing OpenWhisk lies \textit{Kafka}, a high-throughput, distributed, publish-subscribe messaging system. 
 
 The need for a publish-subscribe notification service is addressed with the adoption of \textit{Mosquitto}, an open source MQTT implementation largely adopted by IoT practitioners. %MQTT is the standard protocol for IoT machine-to-machine communication. 
-Among its features, its \textit{broker} enables \textit{topic bridging} and \textit{remapping}. The former allows two or more brokers to become publish/subscribers of each other, so that messages published to one broker are propagated. In turn, topic renaming allows the definition of prefixes to the topics propagated from/to other brokers. The platform prototype exploit these features to allow the propagation of events from/to surrogate SEPs, as discussed in Section~\ref{sec:SEP_RTEC}. %Figure~\ref{} illustrates the resulting architecture.
+Among its features, its \textit{broker} enables \textit{topic bridging} and \textit{remapping}. The former allows two or more brokers to become publish/subscribers of each other, so that messages published to one broker are propagated. In turn, topic renaming allows the definition of prefixes to the topics propagated from/to other brokers. The platform prototype exploit these features to allow the location-aware propagation of events from/to surrogate SEPs, as discussed in Section~\ref{sec:SEP_RTEC}. %Figure~\ref{} illustrates the resulting architecture.
+
+OpenWhisk allows the definition of \textit{feeds} through different architectural patterns. In particular, we exploited the 
 
 \subsection{Nginx}\label{sec:prototype_Nginx}
 

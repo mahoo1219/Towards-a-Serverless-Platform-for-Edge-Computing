@@ -357,20 +357,20 @@
 % for over three affiliations, or if they all won't fit within the width
 % of the page, use this alternative format:
 % 
-\author{\IEEEauthorblockN{Luciano Baresi and %\IEEEauthorrefmark{1} and
-Danilo Filgueira Mendonça}%\IEEEauthorrefmark{2}}
+%\author{\IEEEauthorblockN{Luciano Baresi and %\IEEEauthorrefmark{1} and
+%Danilo Filgueira Mendonça}%\IEEEauthorrefmark{2}}
 %James Kirk\IEEEauthorrefmark{3}, 
 %Montgomery Scott\IEEEauthorrefmark{3} and
 %Eldon Tyrell\IEEEauthorrefmark{4}}
-\IEEEauthorblockA{Dipartimento di Elettronica, Informazione e Bioingegneria\\%\IEEEauthorrefmark{1}
-Politecnico di Milano, Italy\\
+%\IEEEauthorblockA{Dipartimento di Elettronica, Informazione e Bioingegneria\\%\IEEEauthorrefmark{1}
+%Politecnico di Milano, Italy\\
 %Atlanta, Georgia 30332--0250\\ 
-Email: \{luciano.baresi,danilo.filgueira\}@polimi.it
+%Email: \{luciano.baresi,danilo.filgueira\}@polimi.it
 %\IEEEauthorblockA{\IEEEauthorrefmark{2}Twentieth Century Fox, Springfield, USA\\
 %Email: homer@thesimpsons.com}
 %\IEEEauthorblockA{\IEEEauthorrefmark{3}Starfleet Academy, San Francisco, California 96678-2391\\ Telephone: (800) 555--1212, Fax: (888) 555--1212}
 %\IEEEauthorblockA{\IEEEauthorrefmark{4}Tyrell Inc., 123 Replicant Street, Los Angeles, California 90210--4321}
-}}
+%}}
 
 
 
@@ -387,10 +387,10 @@ Email: \{luciano.baresi,danilo.filgueira\}@polimi.it
 % As a general rule, do not put math, special symbols or citations
 % in the abstract
 \begin{abstract}
-The emergency of real-time and data-intensive applications, for which high latency and low throughput are prohibitive, challenges the success of the centralized data centre model. The paradigm of fog/edge computing aims to solve these problems; in contrast with cloud computing, fog nodes are geographically distributed in proximity with end-users, taking advantage of the emerging wireless communication technologies and mobile networks infrastructure.
+The emergency of real-time and data-intensive applications, for which high latency and low throughput are prohibitive, challenges the success of the centralized data centre model. The paradigm of fog/edge computing aims to solve these problems; in contrast with cloud data centres, fog nodes are geographically distributed in proximity with end-users, taking advantage of the emerging wireless communication technologies and mobile networks infrastructure.
 %and prompting an efficient management of limited resources at each node.
-Fog nodes exhibit limited resources, which prompts an efficient usage by edge-based applications and services.
-Addressing the needs of different applications scenarios and the characteristics of heterogeneous fog nodes, in this paper we propose a serverless platform for edge computing. 
+%Fog nodes exhibit limited resources
+The resource limitations of densely distributed fog nodes also prompts an efficient usage by applications and services. Addressing this challenge and the needs of different applications scenarios, in this paper we propose a serverless platform for edge computing. 
 Firstly, we motivated the adoption of a serverless architecture and the \textit{Function-as-a-Service} model.
 %for the efficient provisioning of computing services.
 Secondly, we discussed the need for additional services and mechanisms composing the building blocks of an edge platform. %able to cope with different application scenarios. 
@@ -431,9 +431,10 @@ the feasibility of the \textit{Serverless Edge Platform} in satisfying different
 % conference papers do not normally have an appendix
 
 % use section* for acknowledgment
-\section*{Acknowledgment}
+%TODO: uncomment for camera ready
+%\section*{Acknowledgment}
 
-This work was supported with grant by the \textit{National Council for Scientific and Technological Development} (CNPq) - Brazil.
+%This work was supported with grant by the \textit{National Council for Scientific and Technological Development} (CNPq) - Brazil.
 
 
 % trigger a \newpage just before the given reference

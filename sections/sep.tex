@@ -120,23 +120,29 @@ The advent of data-intensive applications empowered by mobile and IoT devices ra
 
 %To illustrate this scenario
 For example, in the context of smart cities and cyber-physical-systems, let us consider a video surveillance application 
-depicted in Figure~\ref{fig:Edge_Data_Analytics_Video_Surveillance}. Similarly to the AR application, compute-intensive functions such as \textit{feature extraction} (fE) and \textit{matching} (fM\textit{e}) are assigned to  SEPs.
+depicted in Figure~\ref{fig:Edge_Data_Analytics_Video_Surveillance}. Similarly to the AR application, compute-intensive functions such as \textit{feature extraction} (fE) and \textit{matching} (fM\textit{e}) are assigned to SEPs accessible through WLAN or radio access networks (RAN).
 %, this time with the purpose of recognizing faces from a police catalog. 
-These functions compose a workflow exposed as a service and consumed by resource-constrained IoT cameras; video frames are received at short intervals, from which facial features are extracted and matched against a police catalog (PC). A positive identification triggers the execution of a cloud-based service (fM\textit{c}) responsible for a more robust analysis able to detect false positives. In this manner, large volumes of data are processed at the edge, preventing the congestion of the wide area network (WAN) and centralized cloud services.
+These functions compose a workflow exposed as a service and consumed by resource-constrained IoT cameras; video frames are received at short intervals, from which facial features are extracted and matched against a police catalog (PC). A positive identification triggers the execution of a cloud-based service (fM\textit{c}) responsible for a more robust analysis able to detect false positives. In this manner, large volumes of data are processed at the edge, preventing the congestion of the wide area network (WAN). and centralized cloud services.
 
 
 Still in the context of edge data analysis, 
 %other use cases exhibit more strict requirements for latency. For instance, 
-let us imagine that in the future the majority of elderly people will wear body sensors to collect data about their health status. In the event of an emergency (e.g., the beginning of a heart attack), emergency services should be dispatched immediately to the person location. Also, it is very important to provide the user with feedback so she can ask for support from other people.
+let us imagine that in the future the majority of elderly people will wear body sensors to collect data about their health status. In the event of an emergency (e.g., the beginning of a heart attack), emergency services should be dispatched immediately.
+%to the person location. 
+Also, it is very important to provide the user with feedback so she can ask for support.
+% from other people.
 %other people that can provide a first and immediate assistance.
 %The IoT-based heart disease monitoring system for pervasive healthcare service
-The accurate identification of such events, however, requires a complex analysis of data from different sensors (e.g., heart rate, oxigen saturation, glucose)~\cite{Li:2017}. Offloading the analysis from all users to the cloud may add substantial load to the WAN and centralized cloud services. %Instead, this burden should be shared with SEPs.% composing the mobile networks infrastructure (e.g., base stations, multi-technology aggregation sites, etc~\cite{}). 
+The accurate identification of such events, however, requires a complex analysis of data from different sensors (e.g., heart rate, oxigen saturation, glucose)~\cite{Li:2017}. Offloading the analysis from all users to the cloud may add substantial load to the WAN and centralized cloud services. %Instead, this burden is shared with SEPs accessible through a metropolitan area network (MAN).
+
+%composing the mobile networks infrastructure.
+%(e.g., base stations, multi-technology aggregation sites, etc~\cite{}). 
 
  
 
 %\subsubsection{Deployment}
 
-The aforementioned examples share one characteristic: their main purpose is to prevent large volumes of data to be sent and processed by distant data centres. In the latter example, providing feedback in a timely manner is important, but does not fall into the low ($\leq 100ms$) or ultra-low ($\leq 20ms$) latency categories. For this kind of application and in contrast with the scenario in Section~\ref{sec:SEP_MCO}, functions are offloaded from cloud data centres to SEPs; also, the resulting placement decision is \textit{opportunistic} and informed by the availability of computing and networking resources, as well as the characteristics and requirements of each function. 
+The aforementioned examples share one characteristic: their main purpose is to prevent large volumes of data to be sent and processed by distant data centres. In the latter example, providing feedback in a timely manner is important, but does not fall into the low ($\leq 100ms$) or ultra-low ($\leq 20ms$) latency categories. For this kind of application and in contrast with the scenario in Section~\ref{sec:SEP_MCO}, functions are offloaded from cloud data centres to SEPs. The resulting placement decision is \textit{opportunistic} and informed by the availability of computing and networking resources, as well as the characteristics and requirements of each function. 
 
 %TODO
 Notice that, coherently with the FaaS model, the actual CER instantiation is purely reactive; the placement decision delimits the share of resources available for each function in case of contention.
@@ -155,7 +161,7 @@ Its ultimate goal is to optimize the allocation of SEP resources, considering th
 For a given a placement decision, informed \textit{load balancers} make the timely decision on the destination of each request, taking into account the average response time and latency requirements. 
 To render this decision transparent to end-users, 
 load balancers are a constituent part of the SEP architecture or the network infrastructure itself. 
-While this configuration is suitable to SEPs in close proximity with end-users (e.g., co-located with WLAN or RAN infrastructures), it may add substantial latency if the SEP lies many network hops away from the natural path to the cloud alternative. In this case, external load balancers should anticipate request distribution among regional SEPs and cloud-based FaaS platforms.
+While this configuration is suitable to SEPs in close proximity with end-users, it may add substantial latency if the SEP lies many network hops away from the natural path to the cloud alternative. In this case, external load balancers should anticipate request distribution among regional SEPs and cloud-based FaaS platforms.
 
 
 %The materialization of such a dynamic network component can benefit from the concept of \textit{Software Defined Networks} (SDN), considered one of the enabling technologies for edge computing~\cite{Mach:2017}. 
@@ -178,19 +184,21 @@ While this configuration is suitable to SEPs in close proximity with end-users (
 
 %Differently from the mobile computation offloading scenario, edge data analysis may tolerate higher delays, in which case a \textit{scheduler} should decide between edge-based and cloud-based services. 
 
-Figure~\ref{fig:Edge_Data_Analytics_Personal_Assistant} illustrates the opportunistic placement of a \textit{health analysis} function (fA) onto a Regional SEP. Based on the workload and the availability of computational and network resources, a \textit{Centralized Orchestrator} decides for the \textit{maximum number} of CER instances the SEP can host for each function.
+Figure~\ref{fig:Edge_Data_Analytics_Personal_Assistant} illustrates the opportunistic placement of a \textit{health analysis} function (fA) onto a Regional SEP covering a metropolitan network area (MAN). Based on the workload and the availability of computational and network resources, an \textit{Orchestrator} decides for the \textit{maximum number} of CER instances the SEP can host for each function.
 %,  and informs this decision to the \textit{Load Balancer}. 
 New CER instances are allocated on demand, accordingly to the FaaS model. As the volume of requests grows and the limited is achieved, response time increases and part of the requests are diverged
 by the external \textit{Load Balancer} to a cloud-based FaaS.
 %
-%Still in Figure~\ref{fig:Edge_Data_Analytics_Personal_Assistant} example, 
-Upon an emergency, function fA proceeds with two actions: i) the invocation of an 
+
+Still in Figure~\ref{fig:Edge_Data_Analytics_Personal_Assistant} example, 
+function fA proceeds with two actions upon an emergency: i) the invocation of an 
 %external 
 %TODO reverse proxy x geographical DNS
 \textit{Emergency Service}; and ii) the notification of the corresponding \textit{personal assistant device}. For this, the \textit{Load Balancer} works as a \textit{reverse proxy} to assure results will be sent back to devices regardless of the platform each request has been assigned to.
 
-Concluding this section, Figure~\ref{fig:Edge_Load_Placement} presents the distribution of the workload by co-located and external load balancers (LB). Computation offloading and data analysis functions with stringent requirements for latency and throughput are served by local SEPs accessible through RAN or WI-FI;
-other latency-sensitive and data-intensive functions are served by regional SEPs covering a metropolitan network area (MAN); 
+Concluding this section, 
+Figure~\ref{fig:Edge_Load_Placement} presents the distribution of the workload by co-located and external load balancers (LB). Computation offloading and data analysis functions with stringent requirements for latency and throughput are served by SEPs accessible through radio access networks (RAN) or WI-FI;
+other latency-sensitive and data-intensive functions are served by regional SEPs accessible through MAN; 
 remaining workload, including data analysis extrapolating edge capabilities, is served by cloud-based FaaS platforms. 
 
 
@@ -237,7 +245,7 @@ Figure~\ref{fig:Edge_Coordination_AVs} illustrates the solution for AVs coordina
 
 \begin{figure}[bp]
 	\centering
-	\includegraphics[width=1\linewidth]{Figs/Stateful_Edge_Services.pdf}
+	\includegraphics[width=1\linewidth]{Figs/Stateful_Edge_Services_MMG.pdf}
 	\caption{A stateful service enables players to join MMG battle sessions (BT$_1$, BT$_2$); instances (sBT$_1$, sBT$_2$) are mapped to each session; authentication (sAuth) and player scores (sSC) are managed by cloud-based services.}
 	\label{fig:Steteful_Edge_MMG}
 \end{figure}

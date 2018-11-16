@@ -54,11 +54,11 @@ Interestingly, \textit{Kafka} --- and accompanying \textit{Zookeeper} --- has be
 
 Once the memory baseline for the full stack prototype has been delimited, a set of experiments was designed to stress the platform performance in terms of latency, throughput, and the resulting scalability.
 
-Latency overhead was measured by triggering, at regular intervals, $100$ sequential requests to a simple \textit{Python} function directly from the controller (bypassing the \textit{API Gateway}). In turn, the average throughput was measured with an increasing number of concurrent requests to the same function. In both cases, the idleness time before pausing the container (intermediary CER state before termination) was set to $500ms$.
+Latency overhead was measured by triggering, at regular intervals, $100$ sequential requests to a simple \textit{Python} function directly from the controller (bypassing the \textit{API Gateway}). In turn, the average throughput was measured with parallel requests to the same function during $30s$. In both cases, the idleness time before pausing the container (intermediary CER state before termination) was set to $500ms$.
 
 Figure~\ref{fig:RESULTS_LATENCY} presents the obtained results for latency; each bar corresponds to the \textit{latency overhead} for a given \textit{interval between invocations}(TBI). In particular, the blue bars show the results for the native FaaS configuration with up to 4 concurrent CERs spawned; in contrast, red bars show the results for the stateful service extension in which all invocations are handled by the same CER.
 
-\begin{figure}[bth]
+\begin{figure}[btp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
