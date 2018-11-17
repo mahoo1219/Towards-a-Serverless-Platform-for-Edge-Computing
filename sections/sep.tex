@@ -65,7 +65,7 @@ thanks to the reduced payload size (\textit{video frame features}) and the low l
 \begin{figure}[!bp]
 	\centering
 	\includegraphics[width=1\linewidth]{Figs/CachingService}
-	\caption{The very first function invocation fetches the file from a cloud storage and adds it to the \textit{Caching Service} for subsequent use by other CERs.} 
+	\caption{At the first CER initialization the POI catalog is fetched from a \textit{Cloud Storage}; subsequent initializations are served by the \textit{Caching Service}} 
 	\label{fig:Mobile_Computation_Offloading_Caching}
 \end{figure}
 
@@ -100,12 +100,12 @@ with surrogate platforms within a latency/throughput threshold. For this, each p
 
 \input{sections/optimizations.tex}
 
-\begin{figure*}[bh]
+\begin{figure}[thb]
 	\centering
-	\includegraphics[width=1\linewidth]{Figs/Edge_Load_Placement_Expanded}
+	\includegraphics[width=0.95\linewidth]{Figs/Workload_Distribution}
 	\caption{Distribution of the workload for distinct functions among local SEPs, regional SEPs, and cloud-based FaaS platforms by hierarchical load balancers.}
-	\label{fig:Edge_Load_Placement}
-\end{figure*}
+	\label{fig:Workload_Distribution}
+\end{figure}
 
 %A serverless edge platform should support a more efficient caching service to optimize use cases in which functions have data dependencies. 
 \subsection{Edge Data Analysis}\label{sec:SEP_EDA}
@@ -122,7 +122,7 @@ The advent of data-intensive applications empowered by mobile and IoT devices ra
 For example, in the context of smart cities and cyber-physical-systems, let us consider a video surveillance application 
 depicted in Figure~\ref{fig:Edge_Data_Analytics_Video_Surveillance}. Similarly to the AR application, compute-intensive functions such as \textit{feature extraction} (fE) and \textit{matching} (fM\textit{e}) are assigned to SEPs accessible through WLAN or radio access networks (RAN).
 %, this time with the purpose of recognizing faces from a police catalog. 
-These functions compose a workflow exposed as a service and consumed by resource-constrained IoT cameras; video frames are received at short intervals, from which facial features are extracted and matched against a police catalog (PC). A positive identification triggers the execution of a cloud-based service (fM\textit{c}) responsible for a more robust analysis able to detect false positives. In this manner, large volumes of data are processed at the edge, preventing the congestion of the wide area network (WAN). and centralized cloud services.
+These functions compose a workflow exposed as a service and consumed by resource-constrained IoT cameras; video frames are received at short intervals, from which facial features are extracted and matched against a police catalog (PC). Upon a positive identification, function fN triggers the execution of a cloud-based function (fM\textit{c}) responsible for a more robust analysis able to detect false positives. In this manner, large volumes of data are processed at the edge, preventing the congestion of the wide area network (WAN). and centralized cloud services.
 
 
 Still in the context of edge data analysis, 
@@ -184,20 +184,20 @@ While this configuration is suitable to SEPs in close proximity with end-users, 
 
 %Differently from the mobile computation offloading scenario, edge data analysis may tolerate higher delays, in which case a \textit{scheduler} should decide between edge-based and cloud-based services. 
 
-Figure~\ref{fig:Edge_Data_Analytics_Personal_Assistant} illustrates the opportunistic placement of a \textit{health analysis} function (fA) onto a Regional SEP covering a metropolitan network area (MAN). Based on the workload and the availability of computational and network resources, an \textit{Orchestrator} decides for the \textit{maximum number} of CER instances the SEP can host for each function.
+Figure~\ref{fig:Edge_Data_Analytics_Personal_Assistant} illustrates the opportunistic placement of a \textit{health analysis} function (fHA) onto a Regional SEP covering a metropolitan network area (MAN). Based on the workload and the availability of computational and network resources, an \textit{Orchestrator} decides for the \textit{maximum number} of CER instances the SEP can host for each function.
 %,  and informs this decision to the \textit{Load Balancer}. 
 New CER instances are allocated on demand, accordingly to the FaaS model. As the volume of requests grows and the limited is achieved, response time increases and part of the requests are diverged
 by the external \textit{Load Balancer} to a cloud-based FaaS.
 %
 
 Still in Figure~\ref{fig:Edge_Data_Analytics_Personal_Assistant} example, 
-function fA proceeds with two actions upon an emergency: i) the invocation of an 
+function fHA proceeds with two actions upon an emergency: i) the invocation of an 
 %external 
 %TODO reverse proxy x geographical DNS
 \textit{Emergency Service}; and ii) the notification of the corresponding \textit{personal assistant device}. For this, the \textit{Load Balancer} works as a \textit{reverse proxy} to assure results will be sent back to devices regardless of the platform each request has been assigned to.
 
 Concluding this section, 
-Figure~\ref{fig:Edge_Load_Placement} presents the distribution of the workload by co-located and external load balancers (LB). Computation offloading and data analysis functions with stringent requirements for latency and throughput are served by SEPs accessible through radio access networks (RAN) or WI-FI;
+Figure~\ref{fig:Workload_Distribution} presents the distribution of the workload by co-located and external load balancers (LB). Computation offloading and data analysis functions with stringent requirements for latency and throughput are served by SEPs accessible through radio access networks (RAN) or WI-FI;
 other latency-sensitive and data-intensive functions are served by regional SEPs accessible through MAN; 
 remaining workload, including data analysis extrapolating edge capabilities, is served by cloud-based FaaS platforms. 
 
@@ -213,12 +213,7 @@ remaining workload, including data analysis extrapolating edge capabilities, is 
 
 \subsection{Real-time Edge Coordination}\label{sec:SEP_RTEC}
 
-\begin{figure}[bp]
-	\centering
-	\includegraphics[width=1\linewidth]{Figs/Edge_Coordination_AVs_wide.pdf}
-	\caption{Autonomous Vehicles, a road monitoring system, an emergency service and a logging service are coordinated by means of a distributed event bus hosted by surrogate SEPs.}
-	\label{fig:Edge_Coordination_AVs}
-\end{figure}
+
 
 Another important edge application scenario involves the coordination among distributed mobile and IoT devices. %at the network edge. 
 To illustrate this scenario, let us consider the coordination among \textit{Autonomous Vehicles} (AV). %Each vehicle is expected to generate large volumes of data from its sensors, including the AV's actual position, speed, and acceleration. 
@@ -239,6 +234,13 @@ The integration enabled by a \textit{Pub-Sub Service} fits well in a serverless 
 %could be used to trigger, upon an anomalous event, 
 %enables the triggering of a specific SEP function responsible for the invocation of an external service (e.g., a cloud-based service that logs the occurrence of the anomalous event). 
 
+\begin{figure}[bp]
+	\centering
+	\includegraphics[width=1\linewidth]{Figs/Edge_Coordination_AVs_wide.pdf}
+	\caption{Autonomous Vehicles, a road monitoring system, an emergency service and a logging service are coordinated by means of a distributed event bus hosted by surrogate SEPs.}
+	\label{fig:Edge_Coordination_AVs}
+\end{figure}
+
 Figure~\ref{fig:Edge_Coordination_AVs} illustrates the solution for AVs coordination. Each AV subscribes to a surrogate SEP deployed to roadside units (RSU) integrated with video surveillance cameras (VSC); anomalous events --- published by AVs or by \textit{video analysis} functions (fVA) --- are propagated to the AVs connected to the SEP of origin, to those behind, and to the nearest emergency squad (ES). Finally, a cloud-based logging service (sLG) is invoked by a notification function (fN), triggered by same event. To prevent multiple invocations, the notification function at each SEP must distinguish between local events and those from other platforms. The same is valid for the emergency squads covering different road sections. To satisfy this requirement, the \textit{Pub-Sub Service} enforces location-awareness by mapping each event to its SEP of origin.
 
 \subsection{Stateful Edge Services}
@@ -250,7 +252,8 @@ Figure~\ref{fig:Edge_Coordination_AVs} illustrates the solution for AVs coordina
 	\label{fig:Steteful_Edge_MMG}
 \end{figure}
 
-One of the most important directives concerning the design of web services is to move state into a separate layer~\cite{Armbrust:2010}. Stateless services are easier to test, debug, and scale, whereas stateful services require state to be recreated for testing and debug purposes. Moreover, achieving consistency among replicated instances incur in performance degradation. The FaaS model embraces this directive with stateless functions.
+One of the most important directives concerning the design of web services is to move state into a separate layer~\cite{Armbrust:2010}. Stateless services are easier to test, debug, and scale, whereas stateful services require state to be recreated for testing and debug purposes. Moreover, achieving consistency among replicated instances incur in performance degradation. 
+The FaaS model embraces this directive with stateless functions.
 %, suitable for the application scenarios discussed in the previous sections. 
 However, some types of applications exhibit particular needs that justify the adoption of stateful services by a SEP.
 

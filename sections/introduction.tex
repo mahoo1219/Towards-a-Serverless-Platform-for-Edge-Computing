@@ -1,14 +1,21 @@
 \section{Introduction}
 
+%The original problem
 The advent of real-time and data-intensive applications empowered by mobile and Internet of Things (IoT) devices 
 at the network edge 
 poses challenges to the centralized data centre model. The network latency from edge devices to cloud data centres is prohibitive for most real-time and interactive applications.
 %, preventing computation offloading from resource-constrained edge devices to distant cloud servers. 
 Moreover, the transport and analysis of exponentially larger volumes of data by centralized services may result in network bottlenecks and consequently low throughput. 
 
-Targeting the aforementioned problems, fog computing~\cite{Bonomi:2012} --- also known as edge computing, among other similar concepts~\cite{Satyanarayanan:2009,Taleb:2013,ETSI:MEC:2016:03} --- aims to fill the gap between centralized data centres and applications at the network edge with a dense geographical distribution of computing and storage resources. The intrinsic challenges for its realization brought attention from the research community, whose contributions focused on various aspects such as the management of fog node resources~\cite{N.Wang:2017}; the placement and migration of application components and services onto fog and cloud nodes~\cite{Wang:2015a,Wang:2017,Machen:2018}; and the scheduling of computation offloading from mobile and IoT devices~\cite{Liu:2016, OrsiniBL16}. Nonetheless, in many works the concept of an fog node --- or platform, using ETSI's terminology~\cite{ETSI:MEC:2016:03} --- remain abstract; the fulfillment of different application scenarios demands further clarification from the architecture, implementation, and operations perspectives.
+%Edge/fog computing solution
+Targeting the aforementioned problems, fog computing~\cite{Bonomi:2012} --- also known as edge computing, among other similar concepts~\cite{Satyanarayanan:2009,Taleb:2013,ETSI:MEC:2016:03} --- aims to fill the gap between centralized data centres and applications at the network edge with a dense geographical distribution of computing and storage resources.
 
+The intrinsic challenges for its realization brought attention from the research community, whose contributions focused on various aspects such as the management of fog node resources~\cite{N.Wang:2017}; the placement and migration of application components and services onto fog and cloud nodes~\cite{Wang:2015a,Wang:2017,Machen:2018}; and the scheduling of computation offloading from mobile and IoT devices~\cite{Liu:2016, OrsiniBL16}. 
+Nonetheless, in many works the concept of an fog node --- or platform, using ETSI's terminology~\cite{ETSI:MEC:2016:03} --- remain abstract; the fulfillment of different application scenarios demands further clarification from the architecture, implementation, and operations perspectives.
 
+Among the capabilities offered by distinct fog deployment configurations, densely distributed nodes converge in their limitation of resources. This characteristic poses the challenge of maximizing the efficiency in which resources are used by fog applications. For instance, the conventional provisioning of \textit{Virtual Machines} may significantly limit the number of concurring applications and users in the system.
+
+%One 
 
 %In this work, we focus on the materialization of an edge platform.
 
@@ -26,11 +33,11 @@ Targeting the aforementioned problems, fog computing~\cite{Bonomi:2012} --- also
 
 In the recent years, serverless computing has been proposed as an alternative execution model for cloud computing~\cite{Lloyd18serverless}. In a serverless architecture, infrastructure management is fully delegated to third party providers, who takes care of dynamically provisioning and allocating resources --- thus the name \textit{serverless}. The \textit{Function-as-a-Service} model realizes a serverless architecture by allowing application logic, written as stateless functions, to be executed on demand by containerized runtime environments without pre-allocating resources~\cite{Roberts:2018}. 
 
-In this paper, we address the main application scenarios of edge computing with a \textit{Serverless Edge Platform}. The paper contributions are threefold. Firstly, we discuss the benefits of the adoption of a serverless architecture and the \textit{Function-as-a-Service} model in the materialization of an edge platform. Secondly, distinct application scenarios are presented along with 
+In this paper, we address the main application scenarios of edge computing with a \textit{Serverless Edge Platform}. The paper contributions are threefold. Firstly, we discuss the benefits of the adoption of a serverless architecture and the \textit{Function-as-a-Service} model in the materialization of a platform. Secondly, distinct application scenarios are presented along with 
 %details about its specific requirements and 
-the platform services addressing their needs. Finally, we extended \textit{OpenWhisk} --- a state-of-art FaaS platform --- with tools and optimizations composing a platform prototype. 
+the platform services addressing their needs. Finally, we extended \textit{OpenWhisk} --- a state-of-art FaaS platform --- with tools and optimizations composing a \textit{Serverless Edge Platform} prototype. 
 %TODO
-The prototype was evaluated in terms of its resource utilization footprint, latency overhead, throughput, and scalability in a resource-constrained fog deployment. Results demonstrated the feasibility of the proposed \textit{Serverless Edge Platform}.% in tackling the needs of distinct application scenarios.
+The proposed services were evaluated in terms of its resource utilization footprint, latency overhead, throughput, and scalability in a resource-constrained fog deployment. Results demonstrated the feasibility of the proposal in satisfying the requirements from distinct application scenarios.
 
 %we discuss the need for different platform services composing the building blocks of a serverless edge platform; finally, we evaluate a platform prototype composed of state-of-art tools satisfying the identified needs.
 

@@ -23,25 +23,29 @@ In total, memory footprint in idle state summed  2.1GB. Additionally, each CER c
 \centering
 % Some packages, such as MDW tools, offer better commands for making tables
 % than the plain LaTeX2e tabular which is used here.
-\begin{tabular}{|c|c|}
+\begin{tabular}{|c|c|c|}
 \hline
-\textbf{Component} & \textbf{Memory Footprin (MB)}\\
+\textbf{Fig.~10}& \textbf{Component} & \textbf{Memory Footprin (MB)}\\
 \hline
-API Gateway (Nginx) & 21.65~MB\\
+A & Nginx [Reverse Proxy] & 21.65~MB\\
 \hline
-Controller          & 387.3~MB\\
+B & Controller [Load Balancer]         & 387.3~MB\\
 \hline
-Invoker             & 325.5~MB\\
+C & FaaS Invoker             & 325.5~MB\\
 \hline
-Kafka               & 940.0~MB\\
+D & SS Invoker             & 325.5~MB\\
 \hline
-CounchDB            & 130.0~MB\\
+E & Kafka               & 940.0~MB\\
 \hline
-Minio               & 15.7~MB\\
+F & CounchDB            & 130.0~MB\\
 \hline
-Zookeeper           & 81.56~MB\\
+G & Minio               & 15.7~MB\\
 \hline
-\textbf{Total}      & \textbf{2.1~GB}\\
+H & Mosquitto           & 8.6~MB\\
+%\hline
+%H & Zookeeper           & 81.56~MB\\
+\hline
+    & \textbf{Total}  & \textbf{2.1~GB}\\
 \hline
 \end{tabular}
 \end{table}
@@ -63,7 +67,7 @@ Figure~\ref{fig:RESULTS_LATENCY} presents the obtained results for latency; each
 \begin{tikzpicture}
 \begin{axis}[
     width=\linewidth,
-    height=5cm,
+    height=6cm,
     ybar,
     bar width=10pt,
     ymin=0,
@@ -76,7 +80,9 @@ Figure~\ref{fig:RESULTS_LATENCY} presents the obtained results for latency; each
     },
     ylabel={Latency Overhead (ms)},
     xlabel={Interval Between Invocations (ms)},
+    x label style={at={(axis description cs:0.5,-0.115)},anchor=north,font=\small},
     symbolic x coords={31,62,125,250,500},
+    x tick label style={anchor=north, align=center, yshift=0.5ex},
     %xticklabels={31,62,125,250,500},
     xtick=data,
     grid=major,
@@ -87,33 +93,51 @@ Figure~\ref{fig:RESULTS_LATENCY} presents the obtained results for latency; each
 \addplot+[
     %only marks,
     %very thick,
-    fill={rgb:red,1;green,2;blue,5;white,5},
-    draw=black,
-    point meta=y,
-    every node near coord/.style={inner ysep=5pt},
-    error bars/.cd,
-        y dir=both,
-        y explicit
-]
-table[x=tbi, y=mean, y error=error] {results/latency_4.dat};
-%\addlegendentry{Function-as-a-Service}
-\addplot[
-    %only marks,
-    %very thick,
     fill=red!40,
     draw=black,
     point meta=y,
     every node near coord/.style={inner ysep=5pt},
     error bars/.cd,
         y dir=both,
-        y explicit
+        y explicit,
+        %error bar style={line width=1pt}
+        error mark options={
+          rotate=90,
+          red,
+          mark size=2pt,
+          %line width=2pt
+        }
+]
+table[x=tbi, y=mean, y error=error] {results/latency_4.dat};
+\addlegendentry{Function-as-a-Service}
+\addplot[
+    %only marks,
+    %very thick,
+    fill={rgb:red,1;green,2;blue,5;white,5},
+    postaction={
+        pattern=dots,
+        pattern color=black!70
+    },
+    draw=black,
+    point meta=y,
+    every node near coord/.style={inner ysep=5pt},
+    error bars/.cd,
+        y dir=both,
+        y explicit,
+        %error bar style={line width=1pt}
+        error mark options={
+          rotate=90,
+          red,
+          mark size=2pt,
+          %line width=0.7pt
+        }
 ]
 table[x=tbi, y=mean, y error=error] {results/latency_1.dat};
-%\addlegendentry{Stateful Service}
+\addlegendentry{Stateful Service}
 %\legend{used,understood,not understood}
 \end{axis}
 \end{tikzpicture}
-\caption{Latency overhead for the FaaS (left) and the stateful service (right)}
+\caption{Latency overhead X time between invocations}
 \label{fig:RESULTS_LATENCY}
 \end{figure}
 
@@ -138,8 +162,9 @@ Interestingly, as the TBI approaches the idleness time limit ($500ms$), a higher
         legend columns=-1
     },
     %scale only axis,
-    ylabel={Throughput~(res/s)~\textbar~Latency~(ms)},
+    ylabel={Throughput~(r/s)~\textbar~Latency~(ms)},
     xlabel={Simultaneous clients},
+    x label style={font=\small},
     symbolic x coords={10,20,30,40,50,60,70,80,90,100},
     %xticklabels={31,62,125,250,500},
     xtick=data,
@@ -152,6 +177,10 @@ Interestingly, as the TBI approaches the idleness time limit ($500ms$), a higher
     %only marks,
     %very thick,
     fill={rgb:red,0;green,3;blue,3;white,4},
+    postaction={
+        pattern=crosshatch dots,
+        pattern color=black!60
+    },
     draw=black,
     point meta=y,
     every node near coord/.style={inner ysep=5pt},
@@ -160,23 +189,30 @@ Interestingly, as the TBI approaches the idleness time limit ($500ms$), a higher
         y explicit
 ]
 table[x=conn, y=thr]{results/throughput_x16.dat};
-%\addlegendentry{Function-as-a-Service}
+\addlegendentry{Throughput(r/s)}
 \addplot+[
     %only marks,
     %very thick,
-    fill={rgb:red,2;white,4},
+    fill=red!40,
     draw=black,
     point meta=y,
     every node near coord/.style={inner ysep=5pt},
     error bars/.cd,
         y dir=both,
-        y explicit
+        y explicit,
+        %error bar style={line width=1pt}
+        error mark options={
+          rotate=90,
+          red,
+          mark size=2pt,
+          %line width=2pt
+        }
 ]
 table[x=conn, y=mean, y error=error] {results/throughput_x16.dat};
-%\addlegendentry{Function-as-a-Service}
+\addlegendentry{Average Latency(s)}
 \end{axis}
 \end{tikzpicture}
-\caption{Latency~(ms) and throughput~(res/s) for an increasing number of simultaneous clients}
+\caption{Average throughput and latency X number of simultaneous clients}
 \label{fig:RESULTS_THROUGHPUT}
 \end{figure}
 

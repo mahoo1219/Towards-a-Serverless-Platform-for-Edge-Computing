@@ -9,6 +9,8 @@
 %, evaluating it in different aspects. 
 %Figure~\ref{fig:Serverless_Edge_Platform_Overview} presets an overview of the SEP prototype containing all the proposed services. In addition to the services discussed in Section~\ref{sec:SEP}, it includes a \textit{Reverse Proxy}, which is responsible for proxying external HTTP/WebSocket requests to internal platform services.
 
+Figure~\ref{fig:Serverless_Edge_Platform_Overview} presents the SEP architecture with the \textit{Load Balancer} part of the \textit{Controller}. As discussed in Section~\ref{sec:SEP_EDA}, this configuration is suitable for SEPs in close proximity with end-users, whereas regional SEPs outside the main network path towards the cloud should rely on external load balancers. 
+
 \subsection{OpenWhisk}
 
 OpenWhisk~\cite{OpenWhisk} is a state-of-art tool implementing the FaaS model. Originally developed by IBM, it is now an open source project incubated by Apache. It is also the most mature open source FaaS tool available. 
@@ -61,6 +63,12 @@ OpenWhisk does not provide native support for the \textit{WebSocket} protocol. C
 %OpenWhisk is implemented as an event-driven platform. 
 In turn, OpenWhisk natively supports action sequences, which allow the creation and triggering of sequential execution flows using the platform's API. Our prototype exploits this feature for the definition of the \textit{Workflow Service} discussed in Section~\ref{sec:SEP_MCO}. Future extensions may consider the support of more comprehensive flow-based languages. %(e.g., from visual programming tools such as \textit{NodeRED}).
 
+\begin{figure}[tbp]
+	\centering
+	\includegraphics[width=1\linewidth]{Figs/Serverless_Edge_Platform_Prototype.pdf}
+	\caption{Overview of the SEP prototype architecture}
+	\label{fig:Serverless_Edge_Platform_Overview}
+\end{figure}
 
 %\subsection{Caching Service}
 
@@ -96,19 +104,6 @@ The opportunistic placement prototype also required modifications from the \text
 to the cloud-based \textit{Invoker}. 
 
 Finally, an \textit{Orchestrator} was implemented as a separated module in Python language. Its simple role is to monitor the arrival rate of different functions and inform the SEP for the share of resources each function may allocate. 
-
-Figure~\ref{fig:Serverless_Edge_Platform_Overview} presents the resulting architecture with the \textit{Load Balancer} part of the \textit{Controller}. As discussed in Section~\ref{sec:SEP_EDA}, this configuration is suitable for SEPs in close proximity with end-users, whereas regional SEPs outside the main network path towards the cloud should rely on external load balancers. 
-
-
-
-%Figure~\ref{fig:SEP_Low_Latency_FaaS} presents the resulting platform architecture.
-
-\begin{figure}[tbp]
-	\centering
-	\includegraphics[width=1\linewidth]{Figs/Serverless_Edge_Platform_Prototype.pdf}
-	\caption{Overview of the SEP prototype architecture}
-	\label{fig:Serverless_Edge_Platform_Overview}
-\end{figure}
 
 
 
