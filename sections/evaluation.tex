@@ -4,7 +4,7 @@ With the purpose of demonstrating the feasibility of the \textit{Serverless Edge
 
 \subsection{Experimental Setup}
 
-The experiments were performed in a Linux VM with 8GB of RAM and two virtual CPU cores from a cloud provider. Each SEP component was deployed as a Docker container; apart from the MQTT broker (Mosquitto), remaining components are part of the native OpenWhisk technology stack.
+The experiments were performed in two cloud-based Linux VMs with respectively 8GB/4GB of RAM and two virtual CPU cores each.
 
 \subsection{Memory Usage Footprint}
 
@@ -62,7 +62,7 @@ Latency overhead was measured by triggering, at regular intervals, $100$ sequent
 
 Figure~\ref{fig:RESULTS_LATENCY} presents the obtained results for latency; each bar corresponds to the \textit{latency overhead} for a given \textit{interval between invocations}(TBI). In particular, the blue bars show the results for the native FaaS configuration with up to 4 concurrent CERs spawned; in contrast, red bars show the results for the stateful service extension in which all invocations are handled by the same CER.
 
-\begin{figure}[btp]
+\begin{figure}[!tb]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -137,7 +137,7 @@ table[x=tbi, y=mean, y error=error] {results/latency_1.dat};
 %\legend{used,understood,not understood}
 \end{axis}
 \end{tikzpicture}
-\caption{Latency overhead X time between invocations}
+\caption{Latency overhead vs time between invocations}
 \label{fig:RESULTS_LATENCY}
 \end{figure}
 
@@ -145,83 +145,141 @@ In the worse case ($31ms$ between invocations), latency overhead was of $94\pm14
 
 Interestingly, as the TBI approaches the idleness time limit ($500ms$), a higher latency is noticed. This increase can be explained by the overhead for pausing/resuming containers. This is particularly significant for the \textit{Stateful Service}, as the single CER needs to be resumed before processing the subsequent invocation. 
 
-\begin{figure}[tbh]
-\centering
-\begin{tikzpicture}
-\begin{axis}[
-    width= 1\linewidth,
-    height=6cm,
-    ybar stacked,
-    bar width=10pt,
-    ymin=0,
-    ymax=700,
-    enlarge x limits=0.15,
-    legend style={
-        at={(0.5,-0.25)},
-        anchor=north,
-        legend columns=-1
-    },
-    %scale only axis,
-    ylabel={Throughput~(r/s)~\textbar~Latency~(ms)},
-    xlabel={Simultaneous clients},
-    x label style={font=\small},
-    symbolic x coords={10,20,30,40,50,60,70,80,90,100},
-    %xticklabels={31,62,125,250,500},
-    xtick=data,
-    grid=major,
-    %nodes near coords,
-    %nodes near coords align={vertical},
-]
-%\addplot+[smooth] table[x=tbi, y=mean] {results/latency.dat};
-\addplot+[
-    %only marks,
-    %very thick,
-    fill={rgb:red,0;green,3;blue,3;white,4},
-    postaction={
-        pattern=crosshatch dots,
-        pattern color=black!60
-    },
-    draw=black,
-    point meta=y,
-    every node near coord/.style={inner ysep=5pt},
-    error bars/.cd,
-        y dir=both,
-        y explicit
-]
-table[x=conn, y=thr]{results/throughput_x16.dat};
-\addlegendentry{Throughput(r/s)}
-\addplot+[
-    %only marks,
-    %very thick,
-    fill=red!40,
-    draw=black,
-    point meta=y,
-    every node near coord/.style={inner ysep=5pt},
-    error bars/.cd,
-        y dir=both,
-        y explicit,
-        %error bar style={line width=1pt}
-        error mark options={
-          rotate=90,
-          red,
-          mark size=2pt,
-          %line width=2pt
-        }
-]
-table[x=conn, y=mean, y error=error] {results/throughput_x16.dat};
-\addlegendentry{Average Latency(s)}
-\end{axis}
-\end{tikzpicture}
-\caption{Average throughput and latency X number of simultaneous clients}
-\label{fig:RESULTS_THROUGHPUT}
-\end{figure}
 
-Figure~\ref{fig:RESULTS_THROUGHPUT} presents the obtained results for throughput; each point in the curve corresponds to the \textit{response throughput} and \textit{average latency} for a given \textit{request throughput}. 
+Figure~\ref{fig:RESULTS_THROUGHPUT} presents the results for throughput; each bar corresponds to the \textit{response throughput} and \textit{average latency} for a given number of \textit{simultaneous clients}. 
 %
-The obtained results demonstrate the feasibility of a constrained SEP deployment in serving as high as $175$ invocations per second. Given the VM limitations (8GB, 2 virtual CPU cores), the achieved throughput is significant. This is particularly true if we consider that such a limited fog node should address the needs of a reduced number of simultaneous users. Results also indicate the importance of dedicating resources to latency-sensitive applications as the increase in request throughput (lower bar) causes the increase of the perceived latency per request (upper bar). 
+The obtained results demonstrate the feasibility of a constrained SEP deployment in serving as high as $175$ requests per second. Given the VM limitations 
+(8GB of RAM, 2 virtual CPUs), the achieved throughput is significant. This is particularly true if we consider that a limited fog node should address the needs of a reduced number of users. Results also indicate the importance of dedicating resources to latency-sensitive applications as the increase in request throughput causes the increase of the perceived latency per request. 
 
 %Moreover, as the optimal number of concurring CERs summed 1GB only, results could be much improved by increasing the number of CPU cores available. 
 
 %\subsubsection{Threats To Validity}
 
 %In our experiments, we did not evaluate the mechanisms for inter-platform cooperation nor the centralized or hierarchical orchestration of SEP resources. 
+
+
+\begin{figure}[!tb]
+	\centering
+	\begin{tikzpicture}
+	\begin{axis}[
+	width= 1\linewidth,
+	height=6cm,
+	ybar stacked,
+	bar width=10pt,
+	ymin=0,
+	ymax=700,
+	enlarge x limits=0.15,
+	legend style={
+		at={(0.5,-0.25)},
+		anchor=north,
+		legend columns=-1
+	},
+	%scale only axis,
+	ylabel={Throughput~(r/s)~\textbar~Latency~(ms)},
+	xlabel={Simultaneous clients},
+	x label style={font=\small},
+	symbolic x coords={10,20,30,40,50,60,70,80,90,100},
+	%xticklabels={31,62,125,250,500},
+	xtick=data,
+	grid=major,
+	%nodes near coords,
+	%nodes near coords align={vertical},
+	]
+	%\addplot+[smooth] table[x=tbi, y=mean] {results/latency.dat};
+	\addplot+[
+	%only marks,
+	%very thick,
+	fill={rgb:red,0;green,3;blue,3;white,4},
+	postaction={
+		pattern=crosshatch dots,
+		pattern color=black!60
+	},
+	draw=black,
+	point meta=y,
+	every node near coord/.style={inner ysep=5pt},
+	error bars/.cd,
+	y dir=both,
+	y explicit
+	]
+	table[x=conn, y=thr]{results/throughput_x16.dat};
+	\addlegendentry{Throughput(r/s)}
+	\addplot+[
+	%only marks,
+	%very thick,
+	fill=red!40,
+	draw=black,
+	point meta=y,
+	every node near coord/.style={inner ysep=5pt},
+	error bars/.cd,
+	y dir=both,
+	y explicit,
+	%error bar style={line width=1pt}
+	error mark options={
+		rotate=90,
+		red,
+		mark size=2pt,
+		%line width=2pt
+	}
+	]
+	table[x=conn, y=mean, y error=error] {results/throughput_x16.dat};
+	\addlegendentry{Average Latency(s)}
+	\end{axis}
+	\end{tikzpicture}
+	\caption{Average throughput and latency vs number of simultaneous clients}
+	\label{fig:RESULTS_THROUGHPUT}
+\end{figure}
+
+%\begin{figure}[!tb]
+%	\centering
+%	\begin{tikzpicture}
+%	\begin{axis}[
+%	width= 1\linewidth,
+%	height=6cm,
+%	ybar,
+%	bar width=20pt,
+%	ymin=0,
+%	ymax=1350,
+%	enlarge x limits=0.15,
+%	legend style={
+%		at={(0.5,-0.25)},
+%		anchor=north,
+%		legend columns=-1
+%	},
+%	%scale only axis,
+%	ylabel={Throughput~(r/s)~\textbar~Latency~(ms)},
+%	xlabel={Entropy of requests},
+%	x label style={font=\small},
+%	symbolic x coords={2,4,8,16},
+%	%xticklabels={31,62,125,250,500},
+%	xtick=data,
+%	grid=major,
+%	%nodes near coords,
+%	%nodes near coords align={vertical},
+%	]
+%	%\addplot+[smooth] table[x=tbi, y=mean] {results/latency.dat};
+%	\addplot+[
+%	%only marks,
+%	%very thick,
+%	fill={rgb:red,0;green,3;blue,3;white,4},
+%	draw=black,
+%	point meta=y,
+%	every node near coord/.style={inner ysep=5pt},
+%	error bars/.cd,
+%	y dir=both,
+%	y explicit
+%	]
+%	table[x=etp, y=mean, y error=error]{results/latency_x16.dat};
+%	\addlegendentry{Average Latency(ms)}	
+%	\end{axis}
+%	\end{tikzpicture}
+%	\caption{Average throughput and latency X number of simultaneous clients}
+%	\label{fig:RESULTS_ENTROPY}
+%\end{figure}
+
+%A last experiment targeted the performance of the platform in the advent of requests for different functions. The experiment consisted of random requests for an increasing entropy. Additionally, the time between arrivals was randomly picked from the $1-100ms$ interval. In both cases, an uniform distribution was used. 
+%
+%
+%As shown by Figure~\ref{fig:RESULTS_ENTROPY}, the experiment results show an increase in latency as the request entropy grows. 
+
+
+

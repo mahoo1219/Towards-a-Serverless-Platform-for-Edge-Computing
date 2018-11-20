@@ -248,7 +248,7 @@ Figure~\ref{fig:Edge_Coordination_AVs} illustrates the solution for AVs coordina
 \begin{figure}[bp]
 	\centering
 	\includegraphics[width=1\linewidth]{Figs/Stateful_Edge_Services_MMG.pdf}
-	\caption{A stateful service enables players to join MMG battle sessions (BT$_1$, BT$_2$); instances (sBT$_1$, sBT$_2$) are mapped to each session; authentication (sAuth) and player scores (sSC) are managed by cloud-based services.}
+	\caption{A stateful service enables players to join MMG battle sessions (BT$_1$, BT$_2$); instances (sBT$_1$, sBT$_2$) are mapped to each session; authentication (sAth) and player scores (sSC) are managed by cloud-based services.}
 	\label{fig:Steteful_Edge_MMG}
 \end{figure}
 
@@ -293,5 +293,5 @@ To prevent the consistency overhead that would arise with the synchronization of
 
 Figure~\ref{fig:Steteful_Edge_MMG} presents the game example. Users joining battles (BT$_1$ and BT$_2$) are identified by a common token, which is mapped to a specific CER instance (sBT$_1$ and sBT$_2$, respectivelly).
 %(e.g., in a P2P architecture)
-Composing the rest of the application, other delay-tolerant features (e.g., players scores) are managed by resourceful, long-living cloud-based services, accessed without SEP inter-mediation.  %Figure~\ref{fig:Steteful_Edge_MMG} depicts the resulting architecture.%; instances of the stateful \textit{multiplayer battle service} are hosted by the serverless edge platform precisely when needed. 
+Composing the rest of the application, other delay-tolerant features (e.g., players scores and authentication) are managed by resourceful, long-living cloud-based services, accessed without SEP inter-mediation.  %Figure~\ref{fig:Steteful_Edge_MMG} depicts the resulting architecture.%; instances of the stateful \textit{multiplayer battle service} are hosted by the serverless edge platform precisely when needed. 
 

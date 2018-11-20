@@ -9,7 +9,8 @@
 %, evaluating it in different aspects. 
 %Figure~\ref{fig:Serverless_Edge_Platform_Overview} presets an overview of the SEP prototype containing all the proposed services. In addition to the services discussed in Section~\ref{sec:SEP}, it includes a \textit{Reverse Proxy}, which is responsible for proxying external HTTP/WebSocket requests to internal platform services.
 
-Figure~\ref{fig:Serverless_Edge_Platform_Overview} presents the SEP architecture with the \textit{Load Balancer} part of the \textit{Controller}. As discussed in Section~\ref{sec:SEP_EDA}, this configuration is suitable for SEPs in close proximity with end-users, whereas regional SEPs outside the main network path towards the cloud should rely on external load balancers. 
+Figure~\ref{fig:Serverless_Edge_Platform_Overview} presents the SEP architecture with the \textit{Load Balancer} part of the \textit{Controller}. Each SEP component was deployed as a Docker container; apart from the MQTT broker (Mosquitto), remaining components are either original or extended versions from OpenWhisk technology stack.
+
 
 \subsection{OpenWhisk}
 
@@ -61,7 +62,7 @@ OpenWhisk does not provide native support for the \textit{WebSocket} protocol. C
 %\end{itemize}
 %upon the activation of actions --- a stateless function written in one of the many languages supported by the tool.
 %OpenWhisk is implemented as an event-driven platform. 
-In turn, OpenWhisk natively supports action sequences, which allow the creation and triggering of sequential execution flows using the platform's API. Our prototype exploits this feature for the definition of the \textit{Workflow Service} discussed in Section~\ref{sec:SEP_MCO}. Future extensions may consider the support of more comprehensive flow-based languages. %(e.g., from visual programming tools such as \textit{NodeRED}).
+In turn, OpenWhisk natively supports function sequences, which allow the creation and triggering of sequential execution flows using the platform's API. Our prototype exploits this feature for the definition of the \textit{Workflow Service} discussed in Section~\ref{sec:SEP_MCO}. Future extensions may consider the support of more comprehensive flow-based languages. %(e.g., from visual programming tools such as \textit{NodeRED}).
 
 \begin{figure}[tbp]
 	\centering
@@ -102,9 +103,9 @@ To evaluate the feasibility of the opportunistic placement discussed in Section~
 The opportunistic placement prototype also required modifications from the \textit{Invoker} side. More precisely, function activation now takes as parameter the \textit{maximum number of CER instances} each function can have --- as decided by an \textit{Orchestrator}. If this limited is achieved, the function activation fails and the original request is put back into the \textit{Load Balancer} queue. As the response time increases above the threshold, requests are diverged 
 %by the \textit{Load Balancer} 
 to the cloud-based \textit{Invoker}. 
+As discussed in Section~\ref{sec:SEP_EDA}, this configuration is suitable for SEPs in close proximity with end-users, whereas regional SEPs outside the main network path towards the cloud should rely on external load balancers. 
 
 Finally, an \textit{Orchestrator} was implemented as a separated module in Python language. Its simple role is to monitor the arrival rate of different functions and inform the SEP for the share of resources each function may allocate. 
-
 
 
 %or become a bottleneck in intermediary deployments (e.g., regional SEPs covering larger areas). 
@@ -130,7 +131,13 @@ Every invocation to the stateful service is delegated to the corresponding CER b
 The need for a publish-subscribe notification service is addressed with the adoption of \textit{Mosquitto}, an open source MQTT implementation largely adopted by IoT practitioners. %MQTT is the standard protocol for IoT machine-to-machine communication. 
 Among its features, its \textit{broker} enables \textit{topic bridging} and \textit{remapping}. The former allows two or more brokers to become publish/subscribers of each other, so that messages published to one broker are propagated. In turn, topic renaming allows the definition of prefixes to the topics propagated from/to other brokers. The platform prototype exploit these features to allow the location-aware propagation of events from/to surrogate SEPs, as discussed in Section~\ref{sec:SEP_RTEC}. %Figure~\ref{} illustrates the resulting architecture.
 
-OpenWhisk allows the definition of \textit{feeds} through different architectural patterns. In particular, we exploited the 
+The integration of OpenWhisk with the MQTT service requires the definition of a \textit{feed}.
+OpenWhisk allows the implementation of \textit{feeds} through different architectural patterns. In particular, we used the \textit{Service Provider} pattern to keep long-lived connections to the MQTT broker. In this pattern, the \textit{Service Provider} intermediates the subscription of \textit{triggers} to MQTT topics and the invocation of those \textit{triggers} upon topic events. Each trigger can subscribe to one or more topics and activate one or more functions. The \textit{Service Provider} runs in its own container. To prevent the loss of data, each trigger subscription is persisted to the SEP NoSQL database (\textit{CounchDB}).
+
+
+%To prevent bottleneck, the \textit{Service Provider} must cope with the flow of events from the MQTT broker. by distributing subscriptions among multiple service instances.
+%A robust implementation must also persist trigger subscriptions in a reliable way (e.g., by using the SEP NoSQL database).
+
 
 \subsection{Nginx}\label{sec:prototype_Nginx}
 

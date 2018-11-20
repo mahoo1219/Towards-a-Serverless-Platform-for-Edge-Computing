@@ -2,14 +2,15 @@
 
 
 
-Baresi et al.~\cite{GarrigaMendonca2017} was the first work to exploit a serverless architecture in the materialization of mobile edge computing (MEC). The present work aims to  deepen the discussion from the architectural and deployment perspectives. It also encompasses a broader range of application scenarios and types of infrastructures along with the optimization and additional services composing a \textit{Serverless Edge Platform}.
+Baresi et al.~\cite{GarrigaMendonca2017} was the first work to exploit a serverless architecture in the materialization of mobile edge computing (MEC). The present work aims to  deepen the discussion from the architectural and deployment perspectives. It also encompasses a broader range of application scenarios and types of fog infrastructures along with the optimization and additional services composing a \textit{Serverless Edge Platform}.
 
 Aske et al.~\cite{Aske:2018} proposed a framework for supporting multi-provider serverless computing on the edge. Whilst the scheduling involving multiple 
 %serverless edge 
 providers is an interesting problem, in the present work we have focused on the materialization of a \textit{Serverless Edge Platform} from a single provider viewpoint. %In this sense, both works are complementary.
 
 %TODO
-Several works addressed the placement and migration of services in (mobile) edge clouds~\cite{Wang:2015a,Plachy:2016,Machen:2018}. The fundamental different concerning these works and the proposed architecture lies in the execution model: in contrast with \textit{always on} IaaS-based services, %(e.g., a VM-based web application), 
+Several works addressed the placement and migration of services in an N-tier fog-cloud topology~\cite{Wang:2015a,Plachy:2016,Machen:2018}. As proven elsewhere~\cite{Tarneberg:2017}, these problems are NP-Complex; the exiting solutions are based on heuristics and approximations.
+The fundamental different concerning these works and the proposed architecture lies in the execution model: in contrast with \textit{always on} IaaS-based services, %(e.g., a VM-based web application), 
 %functions are stateless, allocated on demand, and limited on their execution time. 
 function migration is addressed with the creation of ephemeral CER instances by distinct SEPs, accordingly to the mobility of clients. Notwithstanding this, existing solutions are of particular interest for the placement problem discussed in Section~\ref{sec:SEP_EDA}.
 
