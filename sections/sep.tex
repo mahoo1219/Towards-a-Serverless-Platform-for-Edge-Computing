@@ -189,9 +189,8 @@ Figure~\ref{fig:Edge_Data_Analytics_Personal_Assistant} illustrates the opportun
 New CER instances are allocated on demand, accordingly to the FaaS model. As the volume of requests grows and the limited is achieved, response time increases and part of the requests are diverged
 by the external \textit{Load Balancer} to a cloud-based FaaS.
 %
-
-Still in Figure~\ref{fig:Edge_Data_Analytics_Personal_Assistant} example, 
-function fHA proceeds with two actions upon an emergency: i) the invocation of an 
+%Still in Figure~\ref{fig:Edge_Data_Analytics_Personal_Assistant} example, 
+Function fHA proceeds with two actions upon an emergency: i) the invocation of an 
 %external 
 %TODO reverse proxy x geographical DNS
 \textit{Emergency Service}; and ii) the notification of the corresponding \textit{personal assistant device}. For this, the \textit{Load Balancer} works as a \textit{reverse proxy} to assure results will be sent back to devices regardless of the platform each request has been assigned to.
